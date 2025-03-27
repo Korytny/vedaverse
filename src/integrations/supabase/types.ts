@@ -17,6 +17,7 @@ export type Database = {
           image_url: string | null
           members_count: number | null
           name: string
+          topics: Json | null
           updated_at: string
         }
         Insert: {
@@ -26,6 +27,7 @@ export type Database = {
           image_url?: string | null
           members_count?: number | null
           name: string
+          topics?: Json | null
           updated_at?: string
         }
         Update: {
@@ -35,9 +37,61 @@ export type Database = {
           image_url?: string | null
           members_count?: number | null
           name?: string
+          topics?: Json | null
           updated_at?: string
         }
         Relationships: []
+      }
+      posts: {
+        Row: {
+          comments_count: number
+          community_id: string
+          content: string
+          created_at: string
+          id: string
+          likes: number
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comments_count?: number
+          community_id: string
+          content: string
+          created_at?: string
+          id?: string
+          likes?: number
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comments_count?: number
+          community_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          likes?: number
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "community_stats"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -102,11 +156,28 @@ export type Database = {
             referencedRelation: "communities"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "user_communities_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "community_stats"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      community_stats: {
+        Row: {
+          id: string | null
+          members_count: number | null
+          name: string | null
+          posts_count: number | null
+          total_comments: number | null
+          total_likes: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never

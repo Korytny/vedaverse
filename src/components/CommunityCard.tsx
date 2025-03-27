@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,7 @@ type CommunityCardProps = {
   image: string;
   isPremium: boolean;
   price?: number;
+  topics?: string[];
 };
 
 const CommunityCard = ({
@@ -26,7 +28,8 @@ const CommunityCard = ({
   members,
   image,
   isPremium,
-  price = 0
+  price = 0,
+  topics = []
 }: CommunityCardProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -45,7 +48,8 @@ const CommunityCard = ({
       image, 
       members, 
       user.id,
-      isPremium
+      isPremium,
+      topics
     );
 
     if (result) {
@@ -89,6 +93,20 @@ const CommunityCard = ({
           <p className="text-muted-foreground line-clamp-3">
             {description}
           </p>
+          {topics && topics.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-2">
+              {topics.slice(0, 3).map((topic, index) => (
+                <Badge key={index} variant="secondary" className="text-xs">
+                  {topic}
+                </Badge>
+              ))}
+              {topics.length > 3 && (
+                <Badge variant="outline" className="text-xs">
+                  +{topics.length - 3} more
+                </Badge>
+              )}
+            </div>
+          )}
         </CardContent>
         
         <CardFooter className="pt-2">

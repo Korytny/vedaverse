@@ -9,7 +9,8 @@ export const joinCommunity = async (
   image: string, 
   members: number, 
   userId: string,
-  isPremium?: boolean
+  isPremium?: boolean,
+  topics?: string[]
 ) => {
   try {
     // First, check if the community exists in the database
@@ -30,7 +31,8 @@ export const joinCommunity = async (
           name: title,
           description: description,
           image_url: image,
-          members_count: members
+          members_count: members,
+          topics: topics || []
         });
       
       if (createCommunityError) throw createCommunityError;
@@ -85,5 +87,54 @@ export const joinCommunity = async (
     console.error("Error joining community:", error);
     toast.error(error.message || "Failed to join community");
     return false;
+  }
+};
+
+export const fetchCommunityDetails = async (communityId: string) => {
+  try {
+    // Fetch the community details from the database
+    const { data: community, error } = await supabase
+      .from('communities')
+      .select('*')
+      .eq('id', communityId)
+      .maybeSingle();
+    
+    if (error) throw error;
+    if (!community) return null;
+    
+    // Fetch statistics from the community_stats view
+    const { data: stats, error: statsError } = await supabase
+      .from('community_stats')
+      .select('posts_count, total_likes, total_comments')
+      .eq('id', communityId)
+      .maybeSingle();
+    
+    if (statsError) throw statsError;
+    
+    return {
+      ...community,
+      posts: stats?.posts_count || 0,
+      messages: stats?.total_comments || 0,
+      resources: 0, // Default value if not in database
+      createdAt: community.created_at || new Date().toISOString()
+    };
+  } catch (error) {
+    console.error("Error fetching community details:", error);
+    return null;
+  }
+};
+
+export const fetchCommunities = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('communities')
+      .select('*');
+    
+    if (error) throw error;
+    
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching communities:", error);
+    return [];
   }
 };
