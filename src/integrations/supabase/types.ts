@@ -168,6 +168,33 @@ export type Database = {
           },
         ]
       }
+      mission: {
+        Row: {
+          id: string
+          title: string
+          description: string
+          image_url: string | null
+          order: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description: string
+          image_url?: string | null
+          order?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string
+          image_url?: string | null
+          order?: number
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       community_stats: {

@@ -8,6 +8,7 @@ import { ArrowRight, Info, MessageCircle, Users, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
+import Mission from "@/components/Mission";
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -87,8 +88,38 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [communities, setCommunities] = useState<any[]>([]);
   const [filteredCommunities, setFilteredCommunities] = useState<any[]>([]);
+  const [missionData, setMissionData] = useState<any[]>([]);
 
   useEffect(() => {
+    const fetchMissionData = async () => {
+      try {
+        console.log("Fetching mission data from Supabase...");
+        const { data, error, status } = await supabase
+          .from('mission')
+          .select('title, description, image_url, img_background')
+          .order('order', { ascending: true });
+        
+        console.log("Supabase response:", { status, data, error });
+        
+        if (error) {
+          console.error("Supabase error details:", error);
+          throw error;
+        }
+        
+        if (!data || data.length === 0) {
+          console.warn("No mission data found in Supabase");
+          toast.warning("Mission data not available");
+          return;
+        }
+        
+        setMissionData(data);
+      } catch (error) {
+        console.error("Error fetching mission data:", error);
+        toast.error("Failed to load mission data. Please try again later.");
+      }
+    };
+
+    fetchMissionData();
     const fetchCommunities = async () => {
       try {
         const { data, error } = await supabase
@@ -150,6 +181,7 @@ const Index = () => {
             )}
           </div>
         </section>
+        <Mission />
         
         <section className="py-20">
           <div className="container px-4 mx-auto">
