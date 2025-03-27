@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
@@ -99,21 +98,17 @@ const LoginButton = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      // Determine the appropriate redirect URL based on the current environment
-      const isDevelopment = window.location.hostname === 'localhost' || 
-                           window.location.hostname === '127.0.0.1';
+      // Get the absolute URL for the callback, making sure it uses the same domain
+      // that the user is currently on (whether that's localhost or production)
+      const fullOrigin = window.location.origin;
+      const callbackUrl = `${fullOrigin}/auth/callback`;
       
-      // Use the appropriate redirect URL
-      const redirectUrl = isDevelopment 
-        ? `${window.location.origin}/auth/callback` 
-        : 'https://vedaverse.lovable.app/auth/callback';
-      
-      console.log(`Redirecting to: ${redirectUrl}`);
+      console.log(`Google Auth: Using redirect URL: ${callbackUrl}`);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: redirectUrl,
+          redirectTo: callbackUrl,
         },
       });
       

@@ -14,6 +14,7 @@ const AuthCallback = () => {
       try {
         console.log('AuthCallback: Handling auth callback');
         console.log('Current URL:', window.location.href);
+        console.log('Origin:', window.location.origin);
         
         // Process the OAuth callback or email confirmation
         const { data, error } = await supabase.auth.getSession();
