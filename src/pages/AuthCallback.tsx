@@ -12,7 +12,7 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        // Process the OAuth callback
+        // Process the OAuth callback or email confirmation
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -23,11 +23,18 @@ const AuthCallback = () => {
           toast.success('Successfully signed in!');
           navigate('/dashboard');
         } else {
-          throw new Error('No session found');
+          // If no session but no error, it might be an email confirmation success
+          const hash = window.location.hash;
+          if (hash && hash.includes('access_token')) {
+            toast.success('Email confirmed successfully!');
+            navigate('/dashboard');
+          } else {
+            throw new Error('No session found');
+          }
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error('Auth callback error:', err);
-        setError('Authentication failed. Please try again.');
+        setError(err.message || 'Authentication failed. Please try again.');
         toast.error('Authentication failed');
         setTimeout(() => navigate('/'), 2000);
       }
