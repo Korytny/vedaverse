@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
@@ -98,17 +99,11 @@ const LoginButton = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      // Get the absolute URL for the callback, making sure it uses the same domain
-      // that the user is currently on (whether that's localhost or production)
-      const fullOrigin = window.location.origin;
-      const callbackUrl = `${fullOrigin}/auth/callback`;
-      
-      console.log(`Google Auth: Using redirect URL: ${callbackUrl}`);
-      
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      // Simplified Google auth - just use the current origin
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: callbackUrl,
+          redirectTo: `${window.location.origin}/auth/callback`,
         },
       });
       

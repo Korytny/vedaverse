@@ -14,9 +14,8 @@ const AuthCallback = () => {
       try {
         console.log('AuthCallback: Handling auth callback');
         console.log('Current URL:', window.location.href);
-        console.log('Origin:', window.location.origin);
         
-        // Process the OAuth callback or email confirmation
+        // Process the OAuth callback
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -29,30 +28,8 @@ const AuthCallback = () => {
           toast.success('Successfully signed in!');
           navigate('/dashboard');
         } else {
-          // Check for hash parameters which might indicate OAuth sign-in
-          const hashParams = window.location.hash.substring(1);
-          console.log('Hash parameters:', hashParams);
-          
-          const params = new URLSearchParams(hashParams);
-          const accessToken = params.get('access_token');
-          
-          if (accessToken) {
-            console.log('Access token found in hash, exchanging token');
-            // If we have an access_token in the hash, attempt to exchange it
-            const { data, error } = await supabase.auth.getUser(accessToken);
-            
-            if (error) {
-              console.error('Error getting user with access token:', error);
-              throw error;
-            }
-            
-            console.log('User retrieved:', data.user?.email);
-            toast.success('Successfully signed in!');
-            navigate('/dashboard');
-          } else {
-            console.log('No session or access token found');
-            throw new Error('No session found');
-          }
+          console.log('No session found');
+          throw new Error('No session found');
         }
       } catch (err: any) {
         console.error('Auth callback error:', err);
