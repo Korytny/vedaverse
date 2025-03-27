@@ -41,6 +41,11 @@ const ProjectDetails = () => {
         const communityData = await fetchCommunityDetails(id);
         
         if (communityData) {
+          // Sort projects by Order field if available
+          const sortedProjects = communityData.projects?.sort((a, b) =>
+            (a.order || 0) - (b.order || 0)
+          ) || [];
+          
           setCommunity({
             ...communityData,
             title: communityData.name,
@@ -50,7 +55,8 @@ const ProjectDetails = () => {
             members: communityData.members_count || 0,
             topics: communityData.topics || [],
             isPremium: false,
-            price: 0
+            price: 0,
+            projects: sortedProjects
           });
         }
         

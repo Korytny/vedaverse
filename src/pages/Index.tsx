@@ -93,7 +93,8 @@ const Index = () => {
       try {
         const { data, error } = await supabase
           .from('communities')
-          .select('*');
+          .select('*')
+          .order('order', { ascending: true });
         
         if (error) throw error;
         
