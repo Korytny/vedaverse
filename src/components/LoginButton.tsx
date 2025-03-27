@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
-import { User, Google } from 'lucide-react';
+import { User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import {
   Dialog,
@@ -24,6 +24,14 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+
+// Custom Google icon component since lucide-react doesn't have a Google icon
+const GoogleIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"></circle>
+    <path d="M17.6 8H12v4h3.2c-.3 1.4-1.5 2.5-3.2 2.5-1.9 0-3.5-1.6-3.5-3.5S10.1 7.5 12 7.5c.9 0 1.7.4 2.3 1l3-3C15.9 4.2 14 3.5 12 3.5c-4.1 0-7.5 3.4-7.5 7.5s3.4 7.5 7.5 7.5c4.1 0 7-3 7-7 0-1-.2-2-.4-3z"></path>
+  </svg>
+);
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -141,8 +149,8 @@ const LoginButton = () => {
               onClick={handleGoogleLogin}
               className="w-full"
             >
-              <Google className="mr-2 h-4 w-4" />
-              Continue with Google
+              <GoogleIcon />
+              <span className="ml-2">Continue with Google</span>
             </Button>
             
             <div className="relative">
