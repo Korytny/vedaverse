@@ -17,6 +17,7 @@ export type Database = {
           image_url: string | null
           members_count: number | null
           name: string
+          short_description: string | null
           topics: Json | null
           updated_at: string
         }
@@ -27,6 +28,7 @@ export type Database = {
           image_url?: string | null
           members_count?: number | null
           name: string
+          short_description?: string | null
           topics?: Json | null
           updated_at?: string
         }
@@ -37,6 +39,7 @@ export type Database = {
           image_url?: string | null
           members_count?: number | null
           name?: string
+          short_description?: string | null
           topics?: Json | null
           updated_at?: string
         }

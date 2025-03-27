@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Save, Plus, Trash2 } from 'lucide-react';
-import { projectsData, Project } from '@/data/projects';
+import { projectsData } from '@/data/projects';
 import { toast } from 'sonner';
 import {
   Form,
@@ -21,73 +21,83 @@ import {
 } from "@/components/ui/form"
 import { useForm } from "react-hook-form";
 import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
 
 const AdminEditProject = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [project, setProject] = useState<Project | null>(null);
+  const [project, setProject] = useState<any>(null);
   const [newTopic, setNewTopic] = useState('');
 
-  // In a real app, this would be fetched from Supabase
   useEffect(() => {
-    const foundProject = projectsData.find(p => p.id === id);
-    if (foundProject) {
-      setProject(foundProject);
-      // Initialize form with project data
-      form.reset({
-        title: foundProject.title,
-        description: foundProject.description,
-        longDescription: foundProject.longDescription,
-        members: foundProject.members,
-        image: foundProject.image,
-        isPremium: foundProject.isPremium,
-        price: foundProject.price || 0,
-        messages: foundProject.messages,
-        resources: foundProject.resources,
-      });
-    }
+    const fetchCommunityDetails = async () => {
+      if (!id) return;
+
+      try {
+        const { data, error } = await supabase
+          .from('communities')
+          .select('*')
+          .eq('id', id)
+          .single();
+
+        if (error) throw error;
+
+        setProject(data);
+        
+        // Initialize form with project data
+        form.reset({
+          title: data.name,
+          description: data.description,
+          short_description: data.short_description || '',
+          image: data.image_url,
+          members: data.members_count || 0,
+          isPremium: false,
+          price: 0,
+        });
+      } catch (error) {
+        console.error("Error fetching community details:", error);
+        toast.error("Failed to load community details");
+      }
+    };
+
+    fetchCommunityDetails();
   }, [id]);
 
   const form = useForm({
     defaultValues: {
       title: '',
       description: '',
-      longDescription: '',
-      members: 0,
+      short_description: '',
       image: '',
+      members: 0,
       isPremium: false,
       price: 0,
-      messages: 0,
-      resources: 0,
     }
   });
 
-  const onSubmit = (data: any) => {
-    // In a real app, this would update Supabase
-    if (project) {
-      const updatedProject = {
-        ...project,
-        ...data,
-        topics: [...project.topics] // Keep the current topics
-      };
+  const onSubmit = async (data: any) => {
+    if (!project) return;
+
+    try {
+      const { error } = await supabase
+        .from('communities')
+        .update({
+          name: data.title,
+          description: data.description,
+          short_description: data.short_description,
+          image_url: data.image,
+          members_count: data.members,
+          topics: project.topics || []
+        })
+        .eq('id', project.id);
+
+      if (error) throw error;
       
-      // Here we would make an API call to update the data
-      console.log('Saving project:', updatedProject);
-      
-      // Update the project in projectsData (simulating a database update)
-      const projectIndex = projectsData.findIndex(p => p.id === id);
-      if (projectIndex !== -1) {
-        projectsData[projectIndex] = updatedProject;
-      }
-      
-      // Update the local state
-      setProject(updatedProject);
-      
-      // Show success message
-      toast.success('Project updated successfully!');
-      
-      // Navigate back to project details
+      toast.success('Community updated successfully!');
       navigate(`/project/${id}`);
+    } catch (error) {
+      console.error("Error updating community:", error);
+      toast.error("Failed to update community");
     }
   };
 
@@ -95,15 +105,16 @@ const AdminEditProject = () => {
     if (!newTopic.trim()) return;
     if (project) {
       // Make sure we're not duplicating topics
-      if (project.topics.includes(newTopic.trim())) {
+      if (project.topics?.includes(newTopic.trim())) {
         toast.error('Topic already exists!');
         return;
       }
       
       // Add the new topic
+      const updatedTopics = [...(project.topics || []), newTopic.trim()];
       setProject({
         ...project,
-        topics: [...project.topics, newTopic.trim()]
+        topics: updatedTopics
       });
       setNewTopic('');
     }
@@ -111,9 +122,10 @@ const AdminEditProject = () => {
 
   const removeTopic = (topicToRemove: string) => {
     if (project) {
+      const updatedTopics = (project.topics || []).filter(topic => topic !== topicToRemove);
       setProject({
         ...project,
-        topics: project.topics.filter(topic => topic !== topicToRemove)
+        topics: updatedTopics
       });
     }
   };
@@ -171,26 +183,6 @@ const AdminEditProject = () => {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Short Description</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="Brief description (shown in cards)" 
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      This appears on the project card on the homepage.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="longDescription"
-                render={({ field }) => (
-                  <FormItem>
                     <FormLabel>Full Description</FormLabel>
                     <FormControl>
                       <Textarea 
@@ -201,6 +193,26 @@ const AdminEditProject = () => {
                     </FormControl>
                     <FormDescription>
                       This appears on the project details page.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="short_description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Short Description</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Brief description (shown in cards)" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      This appears on community cards and lists. Keep it concise.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -221,118 +233,10 @@ const AdminEditProject = () => {
                 )}
               />
               
-              <FormField
-                control={form.control}
-                name="isPremium"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                    <FormControl>
-                      <input
-                        type="checkbox"
-                        checked={field.value}
-                        onChange={field.onChange}
-                        className="h-4 w-4 mt-1"
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Premium Project</FormLabel>
-                      <FormDescription>
-                        Is this a premium project that requires payment to join?
-                      </FormDescription>
-                    </div>
-                  </FormItem>
-                )}
-              />
-              
-              {form.watch("isPremium") && (
-                <FormField
-                  control={form.control}
-                  name="price"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Price (USD)</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number" 
-                          step="0.01" 
-                          min="0" 
-                          placeholder="Enter price" 
-                          {...field} 
-                          onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Monthly subscription price for this premium project.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <FormField
-                  control={form.control}
-                  name="members"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Members</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number" 
-                          min="0" 
-                          placeholder="Members count" 
-                          {...field} 
-                          onChange={(e) => field.onChange(parseInt(e.target.value))}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="messages"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Messages</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number" 
-                          min="0" 
-                          placeholder="Message count" 
-                          {...field} 
-                          onChange={(e) => field.onChange(parseInt(e.target.value))}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="resources"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Resources</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number" 
-                          min="0" 
-                          placeholder="Resource count" 
-                          {...field} 
-                          onChange={(e) => field.onChange(parseInt(e.target.value))}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
-              
               <div className="space-y-4">
                 <Label>Topics</Label>
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {project.topics.map((topic, index) => (
+                  {project.topics?.map((topic, index) => (
                     <Badge key={index} className="group">
                       {topic}
                       <button

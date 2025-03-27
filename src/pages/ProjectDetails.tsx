@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -6,7 +5,6 @@ import Footer from '@/components/Footer';
 import PageTransition from '@/components/PageTransition';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Users, MessageCircle, Calendar, BookOpen, Edit, Loader2 } from 'lucide-react';
-import { projectsData } from '@/data/projects';
 import { fetchCommunityDetails, joinCommunity } from '@/utils/communityUtils';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
@@ -30,27 +28,30 @@ const ProjectDetails = () => {
       
       setLoading(true);
       
-      // Try to fetch from database first
-      const communityData = await fetchCommunityDetails(id);
-      
-      if (communityData) {
-        setCommunity({
-          ...communityData,
-          title: communityData.name,
-          image: communityData.image_url,
-          longDescription: communityData.description,
-          members: communityData.members_count || 0,
-          topics: communityData.topics || [],
-          isPremium: false,
-          price: 0
-        });
-      } else {
-        // Fallback to local data
-        const localProject = projectsData.find(p => p.id === id);
-        if (localProject) setCommunity(localProject);
+      try {
+        // Try to fetch from database first
+        const communityData = await fetchCommunityDetails(id);
+        
+        if (communityData) {
+          setCommunity({
+            ...communityData,
+            title: communityData.name,
+            image: communityData.image_url,
+            longDescription: communityData.description,
+            shortDescription: communityData.short_description,
+            members: communityData.members_count || 0,
+            topics: communityData.topics || [],
+            isPremium: false,
+            price: 0
+          });
+        }
+        
+        setLoading(false);
+      } catch (error) {
+        console.error("Error loading community data:", error);
+        toast.error("Failed to load community details");
+        setLoading(false);
       }
-      
-      setLoading(false);
     };
     
     loadCommunityData();
@@ -153,7 +154,9 @@ const ProjectDetails = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="col-span-2">
                 <h2 className="text-2xl font-bold mb-4">About this Community</h2>
-                <p className="text-muted-foreground whitespace-pre-line mb-6">{community.longDescription || community.description}</p>
+                <p className="text-muted-foreground whitespace-pre-line mb-6">
+                  {community.shortDescription || community.longDescription || community.description}
+                </p>
                 
                 <h2 className="text-2xl font-bold mb-4">Topics Covered</h2>
                 <div className="flex flex-wrap gap-2 mb-6">

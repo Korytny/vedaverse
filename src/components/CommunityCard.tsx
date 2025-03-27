@@ -14,6 +14,7 @@ type CommunityCardProps = {
   id: string;
   title: string;
   description: string;
+  short_description?: string;
   members: number;
   image: string;
   isPremium: boolean;
@@ -25,6 +26,7 @@ const CommunityCard = ({
   id,
   title,
   description,
+  short_description,
   members,
   image,
   isPremium,
@@ -91,7 +93,7 @@ const CommunityCard = ({
         
         <CardContent className="flex-grow">
           <p className="text-muted-foreground line-clamp-3">
-            {description}
+            {short_description || description}
           </p>
           {topics && topics.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-2">
