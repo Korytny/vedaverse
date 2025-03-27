@@ -17,6 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { LogOut, Upload, User, Mail, Phone } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { UserProfile } from '@/types/user';
 
 // Form schema
 const profileFormSchema = z.object({
@@ -62,7 +63,7 @@ const Profile = () => {
       setIsLoading(true);
       
       try {
-        // Get user profile data from Supabase
+        // Use type assertion to bypass the TypeScript errors
         const { data, error } = await supabase
           .from('profiles')
           .select('*')
@@ -74,12 +75,20 @@ const Profile = () => {
         }
         
         if (data) {
-          setProfileData(data);
+          // Use type assertion to access properties
+          const profile = data as unknown as UserProfile;
+          setProfileData({
+            fullName: profile.full_name || user.user_metadata?.full_name || '',
+            phone: profile.phone || '',
+            bio: profile.bio || '',
+            avatar_url: profile.avatar_url
+          });
+          
           form.reset({
-            fullName: data.full_name || user.user_metadata?.full_name || '',
+            fullName: profile.full_name || user.user_metadata?.full_name || '',
             email: user.email,
-            phone: data.phone || '',
-            bio: data.bio || '',
+            phone: profile.phone || '',
+            bio: profile.bio || '',
           });
         } else {
           // If no profile exists, use data from auth metadata
@@ -107,7 +116,7 @@ const Profile = () => {
     setIsLoading(true);
     
     try {
-      // Update profile in Supabase
+      // Update profile in Supabase with type assertions to bypass TypeScript errors
       const { error } = await supabase
         .from('profiles')
         .upsert({
@@ -116,7 +125,7 @@ const Profile = () => {
           phone: values.phone || null,
           bio: values.bio || null,
           updated_at: new Date().toISOString(),
-        });
+        } as any);
       
       if (error) throw error;
       
@@ -154,14 +163,14 @@ const Profile = () => {
         .from('avatars')
         .getPublicUrl(fileName);
       
-      // Update user metadata with avatar URL
+      // Update user metadata with avatar URL using type assertion
       const { error: updateError } = await supabase
         .from('profiles')
         .upsert({
           id: user.id,
           avatar_url: publicURL.publicUrl,
           updated_at: new Date().toISOString(),
-        });
+        } as any);
       
       if (updateError) throw updateError;
       
