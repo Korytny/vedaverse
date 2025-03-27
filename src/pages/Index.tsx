@@ -1,4 +1,3 @@
-
 import Hero from '@/components/Hero';
 import Navbar from '@/components/Navbar';
 import FeaturesSection from '@/components/FeaturesSection';
@@ -13,6 +12,7 @@ import { projectsData } from '@/data/projects';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { joinCommunity } from '@/utils/communityUtils';
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -184,80 +184,18 @@ const CommunityCardWithInfo = (props) => {
       return;
     }
 
-    try {
-      // First, check if the community exists in the database
-      const { data: existingCommunity, error: communityCheckError } = await supabase
-        .from('communities')
-        .select('id')
-        .eq('id', props.id)
-        .maybeSingle();
-      
-      if (communityCheckError) throw communityCheckError;
-      
-      // If community doesn't exist in the database, create it first
-      if (!existingCommunity) {
-        const { error: createCommunityError } = await supabase
-          .from('communities')
-          .insert({
-            id: props.id,
-            name: props.title,
-            description: props.description,
-            image_url: props.image,
-            members_count: props.members
-          });
-        
-        if (createCommunityError) throw createCommunityError;
-      }
-      
-      // Check if the user is already a member of this community
-      const { data: existingMembership, error: checkError } = await supabase
-        .from('user_communities')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('community_id', props.id)
-        .maybeSingle();
-      
-      if (checkError) throw checkError;
-      
-      if (existingMembership) {
-        toast.info(`You're already a member of ${props.title}`);
-        return;
-      }
-      
-      // Add the user to the community
-      const { error: joinError } = await supabase
-        .from('user_communities')
-        .insert({
-          user_id: user.id,
-          community_id: props.id,
-          unread_messages: 0,
-          last_activity: new Date().toISOString()
-        });
-      
-      if (joinError) throw joinError;
-      
-      // Success message
-      if (props.isPremium) {
-        toast.success(`Successfully joined premium community: ${props.title}`);
-      } else {
-        toast.success(`Successfully joined community: ${props.title}`);
-      }
-      
-      // Update member count
-      const { error: updateError } = await supabase
-        .from('communities')
-        .update({ members_count: props.members + 1 })
-        .eq('id', props.id);
-      
-      if (updateError) {
-        console.error("Error updating members count:", updateError);
-      }
-      
-      // Navigate to dashboard
+    const result = await joinCommunity(
+      props.id, 
+      props.title, 
+      props.description, 
+      props.image, 
+      props.members, 
+      user.id,
+      props.isPremium
+    );
+
+    if (result) {
       navigate('/dashboard');
-    } catch (error) {
-      console.error("Error joining community:", error);
-      toast.error(error.message || "Failed to join community");
     }
   };
 
