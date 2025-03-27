@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import Mission from "@/components/Mission";
+import GalleryDemo from '@/components/ui/gallery-demo';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -182,6 +183,11 @@ const Index = () => {
           </div>
         </section>
         <Mission />
+        <section className="py-12 bg-white">
+          <div className="container mx-auto px-4">
+            <GalleryDemo />
+          </div>
+        </section>
         
         <section className="py-20">
           <div className="container px-4 mx-auto">
