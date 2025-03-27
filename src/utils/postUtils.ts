@@ -20,18 +20,39 @@ export type Post = {
 
 export const fetchCommunityPosts = async (communityId: string): Promise<Post[]> => {
   try {
-    const { data, error } = await supabase
+    // First fetch posts
+    const { data: postsData, error: postsError } = await supabase
       .from('posts')
-      .select(`
-        *,
-        user:profiles!user_id(full_name, avatar_url)
-      `)
+      .select('*')
       .eq('community_id', communityId)
       .order('created_at', { ascending: false });
     
-    if (error) throw error;
+    if (postsError) throw postsError;
     
-    return data || [];
+    if (!postsData?.length) return [];
+    
+    // Then fetch user profiles separately
+    const userIds = postsData.map(post => post.user_id);
+    const { data: profilesData, error: profilesError } = await supabase
+      .from('profiles')
+      .select('id, full_name, avatar_url')
+      .in('id', userIds);
+    
+    if (profilesError) throw profilesError;
+    
+    // Map profiles to posts
+    const postsWithUsers: Post[] = postsData.map(post => {
+      const userProfile = profilesData?.find(profile => profile.id === post.user_id);
+      return {
+        ...post,
+        user: userProfile ? {
+          full_name: userProfile.full_name,
+          avatar_url: userProfile.avatar_url
+        } : undefined
+      };
+    });
+    
+    return postsWithUsers;
   } catch (error) {
     console.error("Error fetching community posts:", error);
     return [];
