@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { LockIcon, Users } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 type CommunityCardProps = {
   id: string;
@@ -26,12 +29,66 @@ const CommunityCard = ({
   isPremium,
   price = 0
 }: CommunityCardProps) => {
-  const handleJoin = () => {
-    // This is a placeholder for actual join logic with Supabase
-    if (isPremium) {
-      toast.success(`Successfully joined premium community: ${title}`);
-    } else {
-      toast.success(`Successfully joined community: ${title}`);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleJoin = async () => {
+    if (!user) {
+      toast.error("Please sign in to join communities");
+      navigate('/');
+      return;
+    }
+
+    try {
+      // Check if user is already a member
+      const { data: existingMembership, error: checkError } = await supabase
+        .from('user_communities')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('community_id', id)
+        .maybeSingle();
+      
+      if (checkError) throw checkError;
+      
+      if (existingMembership) {
+        toast.info(`You're already a member of ${title}`);
+        return;
+      }
+      
+      // Join the community
+      const { error: joinError } = await supabase
+        .from('user_communities')
+        .insert({
+          user_id: user.id,
+          community_id: id,
+          unread_messages: 0,
+          last_activity: new Date().toISOString()
+        });
+      
+      if (joinError) throw joinError;
+      
+      // Success message
+      if (isPremium) {
+        toast.success(`Successfully joined premium community: ${title}`);
+      } else {
+        toast.success(`Successfully joined community: ${title}`);
+      }
+      
+      // Increment members count
+      const { error: updateError } = await supabase
+        .from('communities')
+        .update({ members_count: members + 1 })
+        .eq('id', id);
+      
+      if (updateError) {
+        console.error("Error updating members count:", updateError);
+      }
+      
+      // Navigate to dashboard after joining
+      navigate('/dashboard');
+    } catch (error: any) {
+      console.error("Error joining community:", error);
+      toast.error(error.message || "Failed to join community");
     }
   };
 

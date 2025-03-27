@@ -18,10 +18,21 @@ import { toast } from 'sonner';
 type Community = {
   id: string;
   name: string;
-  unreadMessages: number;
-  lastActivity: string;
-  members: number;
-  image: string;
+  description: string;
+  image_url: string;
+  members_count: number;
+  unread_messages?: number;
+  last_activity?: string;
+};
+
+type UserCommunity = {
+  id: string;
+  community_id: string;
+  user_id: string;
+  joined_at: string;
+  last_activity: string;
+  unread_messages: number;
+  community: Community;
 };
 
 type Activity = {
@@ -35,9 +46,9 @@ type Activity = {
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, isLoading } = useAuth();
-  const [communities, setCommunities] = useState<Community[]>([]);
-  const [activities, setActivities] = useState<Activity[]>([]);
+  const [userCommunities, setUserCommunities] = useState<UserCommunity[]>([]);
   const [recommendedCommunities, setRecommendedCommunities] = useState<Community[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
   const [userData, setUserData] = useState({
     name: "",
     email: "",
@@ -64,58 +75,48 @@ const Dashboard = () => {
           avatar: user.user_metadata?.avatar_url || `https://i.pravatar.cc/150?u=${user.id}`,
         });
         
-        // For demo purposes, load mock communities
+        // Fetch user's communities from Supabase
+        const { data: userCommunitiesData, error: userCommunitiesError } = await supabase
+          .from('user_communities')
+          .select(`
+            id,
+            community_id,
+            user_id,
+            joined_at,
+            last_activity,
+            unread_messages,
+            community:communities(*)
+          `)
+          .eq('user_id', user.id);
+        
+        if (userCommunitiesError) throw userCommunitiesError;
+        
+        // Transform data to match our expected format
+        const formattedUserCommunities = userCommunitiesData.map((uc) => ({
+          ...uc,
+          community: uc.community as Community
+        }));
+        
+        setUserCommunities(formattedUserCommunities);
+        
+        // Fetch recommended communities (communities user is not a member of)
+        const userCommunityIds = formattedUserCommunities.map(uc => uc.community_id);
+        
+        const { data: allCommunities, error: allCommunitiesError } = await supabase
+          .from('communities')
+          .select('*');
+        
+        if (allCommunitiesError) throw allCommunitiesError;
+        
+        // Filter out communities user is already a member of
+        const recommended = allCommunities
+          .filter(community => !userCommunityIds.includes(community.id))
+          .slice(0, 3); // Limit to 3 recommendations
+        
+        setRecommendedCommunities(recommended);
+        
+        // For demo purposes, load mock activities
         // In a real app, you would fetch this from Supabase
-        const mockCommunities = [
-          {
-            id: "1",
-            name: "Web Development Mastery",
-            unreadMessages: 12,
-            lastActivity: "2 hours ago",
-            members: 2543,
-            image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop",
-          },
-          {
-            id: "2",
-            name: "Design Thinking Pro",
-            unreadMessages: 5,
-            lastActivity: "Yesterday",
-            members: 1872,
-            image: "https://images.unsplash.com/photo-1613909207039-6b173b755cc1?q=80&w=2072&auto=format&fit=crop",
-          }
-        ];
-        
-        setCommunities(mockCommunities);
-        
-        // Mock recommended communities
-        setRecommendedCommunities([
-          {
-            id: "3",
-            name: "AI & Machine Learning",
-            unreadMessages: 0,
-            lastActivity: "Active now",
-            members: 3201,
-            image: "https://images.unsplash.com/photo-1534366352488-47162e9ef680?q=80&w=2070&auto=format&fit=crop",
-          },
-          {
-            id: "4",
-            name: "UX Research Group",
-            unreadMessages: 0,
-            lastActivity: "1 day ago",
-            members: 1432,
-            image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop",
-          },
-          {
-            id: "5",
-            name: "Mobile App Developers",
-            unreadMessages: 0,
-            lastActivity: "3 days ago",
-            members: 2105,
-            image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2070&auto=format&fit=crop",
-          }
-        ]);
-        
-        // Mock activities
         const mockActivities = [
           {
             id: "1",
@@ -167,6 +168,32 @@ const Dashboard = () => {
     // Scroll to top on component mount
     window.scrollTo(0, 0);
   }, [user, navigate]);
+
+  const handleJoinCommunity = async (communityId: string) => {
+    if (!user) return;
+    
+    try {
+      // Add user to community
+      const { error } = await supabase
+        .from('user_communities')
+        .insert({
+          user_id: user.id,
+          community_id: communityId,
+          unread_messages: 0,
+          last_activity: new Date().toISOString()
+        });
+      
+      if (error) throw error;
+      
+      toast.success("Successfully joined community!");
+      
+      // Refresh communities data
+      navigate(0); // Simple refresh for now
+    } catch (error: any) {
+      console.error("Error joining community:", error);
+      toast.error(error.message || "Failed to join community");
+    }
+  };
 
   // If auth is still loading or we're fetching data, show loading state
   if (isLoading || loading) {
@@ -237,27 +264,27 @@ const Dashboard = () => {
                       <CardDescription>Communities you're currently a member of</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      {communities.length > 0 ? (
+                      {userCommunities.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {communities.map((community) => (
-                            <div key={community.id} className="flex gap-4 p-4 rounded-lg border hover:shadow-sm transition-shadow">
+                          {userCommunities.map((userCommunity) => (
+                            <div key={userCommunity.id} className="flex gap-4 p-4 rounded-lg border hover:shadow-sm transition-shadow">
                               <div className="w-16 h-16 rounded-md overflow-hidden shrink-0">
                                 <img 
-                                  src={community.image} 
-                                  alt={community.name} 
+                                  src={userCommunity.community.image_url} 
+                                  alt={userCommunity.community.name} 
                                   className="w-full h-full object-cover"
                                 />
                               </div>
                               <div className="flex-grow">
-                                <h3 className="font-medium">{community.name}</h3>
+                                <h3 className="font-medium">{userCommunity.community.name}</h3>
                                 <div className="flex items-center text-sm text-muted-foreground mt-1 gap-3">
                                   <span className="flex items-center gap-1">
                                     <Users className="h-3.5 w-3.5" />
-                                    {community.members}
+                                    {userCommunity.community.members_count}
                                   </span>
                                   <span className="flex items-center gap-1">
                                     <MessageSquare className="h-3.5 w-3.5" />
-                                    {community.unreadMessages} new
+                                    {userCommunity.unread_messages} new
                                   </span>
                                 </div>
                                 <div className="mt-2">
@@ -292,9 +319,16 @@ const Dashboard = () => {
                           <div key={community.id} className="p-4 rounded-lg border hover:shadow-sm transition-shadow">
                             <h3 className="font-medium mb-1">{community.name}</h3>
                             <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-                              Connect with {community.members.toLocaleString()} members
+                              Connect with {community.members_count.toLocaleString()} members
                             </p>
-                            <Button variant="outline" size="sm" className="w-full">View Community</Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="w-full"
+                              onClick={() => handleJoinCommunity(community.id)}
+                            >
+                              Join Community
+                            </Button>
                           </div>
                         ))}
                       </div>

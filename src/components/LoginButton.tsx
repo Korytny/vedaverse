@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from 'react-router-dom';
 
 // Custom Google icon component since lucide-react doesn't have a Google icon
 const GoogleIcon = () => (
@@ -42,6 +43,7 @@ const LoginButton = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -74,14 +76,12 @@ const LoginButton = () => {
         
         if (error) throw error;
         toast.success('Successfully logged in!');
+        navigate('/dashboard');
       } else {
         // Handle signup
         const { data, error } = await supabase.auth.signUp({
           email: values.email,
           password: values.password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
-          }
         });
         
         if (error) throw error;
@@ -99,7 +99,7 @@ const LoginButton = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      // Super simplified Google auth - no options at all
+      // Simplified Google auth
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
       });
