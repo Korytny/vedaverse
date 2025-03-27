@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
@@ -98,7 +99,7 @@ const LoginButton = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      // Simplified Google auth without any redirectTo option
+      // Super simplified Google auth - no options at all
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
       });
