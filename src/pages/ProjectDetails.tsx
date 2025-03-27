@@ -248,6 +248,9 @@ const ProjectDetails = () => {
                   <div className="mt-8">
                     <h2 className="text-2xl font-bold mb-4">Community Posts</h2>
                     {user && (
+                      console.log('User is logged in, showing post form'),
+                      true
+                    ) && (
                       <CreatePostForm
                         communityId={id || ''}
                         onPostCreated={loadPosts}
@@ -273,8 +276,14 @@ const ProjectDetails = () => {
                       <div className="text-center py-12 bg-secondary/30 rounded-xl">
                         <h3 className="text-xl font-medium mb-2">No posts yet</h3>
                         <p className="text-muted-foreground mb-4">Be the first to share something with the community!</p>
-                        {!user && (
-                          <Button onClick={handleJoin}>Join Community to Post</Button>
+                        {(!user || !Array.isArray(community.members) ||
+                          (console.log('Join button check - members:', community.members),
+                          console.log('Join button check - user:', user),
+                          !community.members.some(member => String(member?.id) === String(user?.id) || String(member?.user_id) === String(user?.id))
+                        )) && (
+                          <Button onClick={handleJoin}>
+                            {!user ? 'Join Community to Post' : 'Become Member to Post'}
+                          </Button>
                         )}
                       </div>
                     )}

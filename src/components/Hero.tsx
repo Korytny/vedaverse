@@ -31,8 +31,8 @@ const Hero = () => {
     }
   };
   return (
-    <section className="relative h-[60vh] overflow-hidden bg-[url('/images/main.jpg')] bg-cover bg-center w-full">
-      <div className="absolute top-1/4 left-0 right-0 container px-4 mx-auto max-w-6xl">
+    <section className="relative w-full min-h-[70vh] bg-[url('/images/main.jpg')] bg-cover bg-no-repeat bg-top">
+      <div className="absolute top-0 left-0 right-0 container px-4 mx-auto max-w-6xl pt-32">
         <motion.div variants={container} initial="hidden" animate="show" className="text-center max-w-4xl mx-auto">
           <motion.div variants={item}>
             <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tight mb-0 text-balance">Цифровая вселенная ведических проектов</h1>
