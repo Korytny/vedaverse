@@ -12,33 +12,44 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        console.log('Handling auth callback');
+        console.log('AuthCallback: Handling auth callback');
+        console.log('Current URL:', window.location.href);
+        
         // Process the OAuth callback or email confirmation
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
+          console.error('Session error:', error);
           throw error;
         }
         
         if (data.session) {
-          console.log('Session found');
+          console.log('Session found:', data.session.user.email);
           toast.success('Successfully signed in!');
           navigate('/dashboard');
         } else {
           // Check for hash parameters which might indicate OAuth sign-in
-          const params = new URLSearchParams(window.location.hash.substring(1));
+          const hashParams = window.location.hash.substring(1);
+          console.log('Hash parameters:', hashParams);
+          
+          const params = new URLSearchParams(hashParams);
           const accessToken = params.get('access_token');
           
           if (accessToken) {
             console.log('Access token found in hash, exchanging token');
             // If we have an access_token in the hash, attempt to exchange it
             const { data, error } = await supabase.auth.getUser(accessToken);
-            if (error) throw error;
             
+            if (error) {
+              console.error('Error getting user with access token:', error);
+              throw error;
+            }
+            
+            console.log('User retrieved:', data.user?.email);
             toast.success('Successfully signed in!');
             navigate('/dashboard');
           } else {
-            console.log('No session found');
+            console.log('No session or access token found');
             throw new Error('No session found');
           }
         }

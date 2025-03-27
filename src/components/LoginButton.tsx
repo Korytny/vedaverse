@@ -99,14 +99,21 @@ const LoginButton = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      // Use the configured site URL instead of window.location.origin
-      // This ensures we redirect to the URL that's authorized in Google Cloud
-      const site_url = 'https://vedaverse.lovable.app';
+      // Determine the appropriate redirect URL based on the current environment
+      const isDevelopment = window.location.hostname === 'localhost' || 
+                           window.location.hostname === '127.0.0.1';
+      
+      // Use the appropriate redirect URL
+      const redirectUrl = isDevelopment 
+        ? `${window.location.origin}/auth/callback` 
+        : 'https://vedaverse.lovable.app/auth/callback';
+      
+      console.log(`Redirecting to: ${redirectUrl}`);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${site_url}/auth/callback`,
+          redirectTo: redirectUrl,
         },
       });
       
