@@ -13,6 +13,76 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { joinCommunity } from '@/utils/communityUtils';
 
+const CommunityCardWithInfo = (props: any) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleJoin = async () => {
+    if (!user) {
+      toast.error("Please sign in to join communities");
+      navigate('/');
+      return;
+    }
+
+    const result = await joinCommunity(
+      props.id, 
+      props.name, 
+      props.description, 
+      props.image_url, 
+      props.members_count || 0, 
+      user.id,
+      props.is_premium
+    );
+
+    if (result) {
+      navigate('/dashboard');
+    }
+  };
+
+  return (
+    <div className="border border-border/60 rounded-xl overflow-hidden bg-card hover:shadow-md transition-shadow">
+      <div className="relative aspect-video bg-gray-100 overflow-hidden">
+        <Link to={`/project/${props.id}`} className="absolute inset-0 flex items-center justify-center p-1">
+          <img
+            src={props.image_url}
+            alt={props.name}
+            className="h-auto w-auto max-w-full max-h-full object-contain cursor-pointer"
+          />
+        </Link>
+        {props.is_premium && (
+          <div className="absolute top-3 right-3 bg-black/70 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
+            Premium
+          </div>
+        )}
+      </div>
+      <div className="p-5">
+        <Link to={`/project/${props.id}`} className="hover:opacity-80 transition-opacity">
+          <h3 className="font-display font-bold text-xl mb-2 cursor-pointer">{props.name}</h3>
+        </Link>
+        <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+          {props.short_description || props.description}
+        </p>
+        
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+            <Users className="h-4 w-4" />
+            <span>{(props.members_count || 0).toLocaleString()} members</span>
+          </div>
+          <div className="flex gap-2">
+            <Link to={`/project/${props.id}`}>
+              <Button size="sm" variant="outline">
+                <Info className="h-4 w-4 mr-1" />
+                Info
+              </Button>
+            </Link>
+            <Button size="sm" onClick={handleJoin}>Join</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [communities, setCommunities] = useState<any[]>([]);
@@ -50,7 +120,8 @@ const Index = () => {
     }
   }, [searchQuery, communities]);
   
-  return <div className="min-h-screen flex flex-col">
+  return (
+    <div className="min-h-screen flex flex-col">
       <Navbar />
       
       <main className="flex-grow">
@@ -58,37 +129,8 @@ const Index = () => {
           <Hero />
         </section>
         
-        <section id="features">
-          <FeaturesSection />
-        </section>
-        
         <section id="communities" className="py-20">
           <div className="container px-4 mx-auto">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="text-center max-w-3xl mx-auto mb-12"
-            >
-              <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Изучите сообщество</h2>
-              <p className="text-lg text-muted-foreground">Каждый проект это звезда в нашем созвездии</p>
-              
-              <div className="relative max-w-lg mx-auto mt-8">
-                <Input 
-                  placeholder="Search communities..." 
-                  className="pl-10" 
-                  value={searchQuery} 
-                  onChange={e => setSearchQuery(e.target.value)} 
-                />
-                <div className="absolute left-3 top-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.3-4.3"></path>
-                  </svg>
-                </div>
-              </div>
-            </motion.div>
             
             {filteredCommunities.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -105,27 +147,6 @@ const Index = () => {
                 </Button>
               </div>
             )}
-          </div>
-        </section>
-        
-        <section id="stats" className="py-20 bg-secondary/50">
-          <div className="container px-4 mx-auto">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="text-center max-w-3xl mx-auto mb-16"
-            >
-              <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Trusted by creators worldwide</h2>
-              <p className="text-lg text-muted-foreground">Join a growing community of knowledge creators and learners</p>
-            </motion.div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <StatCard icon={<Users className="w-10 h-10" />} value="10,000+" label="Active Members" />
-              <StatCard icon={<BookOpen className="w-10 h-10" />} value="500+" label="Learning Communities" />
-              <StatCard icon={<MessageCircle className="w-10 h-10" />} value="25,000+" label="Daily Discussions" />
-            </div>
           </div>
         </section>
         
@@ -154,89 +175,6 @@ const Index = () => {
       </main>
       
       <Footer />
-    </div>;
-};
-
-const StatCard = ({
-  icon,
-  value,
-  label
-}: {
-  icon: React.ReactNode;
-  value: string;
-  label: string;
-}) => {
-  return <motion.div 
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-    className="bg-white p-8 rounded-xl border border-border/40 text-center"
-  >
-    <div className="mx-auto text-primary mb-4">{icon}</div>
-    <p className="text-3xl font-display font-bold mb-1">{value}</p>
-    <p className="text-muted-foreground">{label}</p>
-  </motion.div>;
-};
-
-const CommunityCardWithInfo = (props: any) => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-
-  const handleJoin = async () => {
-    if (!user) {
-      toast.error("Please sign in to join communities");
-      navigate('/');
-      return;
-    }
-
-    const result = await joinCommunity(
-      props.id, 
-      props.name, 
-      props.description, 
-      props.image_url, 
-      props.members_count || 0, 
-      user.id,
-      props.is_premium
-    );
-
-    if (result) {
-      navigate('/dashboard');
-    }
-  };
-
-  return (
-    <div className="border border-border/60 rounded-xl overflow-hidden bg-card hover:shadow-md transition-shadow">
-      <div className="relative h-40">
-        <img src={props.image_url} alt={props.name} className="w-full h-full object-cover" />
-        {props.is_premium && (
-          <div className="absolute top-3 right-3 bg-black/70 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
-            Premium
-          </div>
-        )}
-      </div>
-      <div className="p-5">
-        <h3 className="font-display font-bold text-xl mb-2">{props.name}</h3>
-        <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-          {props.short_description || props.description}
-        </p>
-        
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <Users className="h-4 w-4" />
-            <span>{(props.members_count || 0).toLocaleString()} members</span>
-          </div>
-          <div className="flex gap-2">
-            <Link to={`/project/${props.id}`}>
-              <Button size="sm" variant="outline">
-                <Info className="h-4 w-4 mr-1" />
-                Info
-              </Button>
-            </Link>
-            <Button size="sm" onClick={handleJoin}>Join</Button>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

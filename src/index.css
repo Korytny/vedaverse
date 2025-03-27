@@ -1,3 +1,10 @@
+@import url('https://rsms.me/inter/inter.css');
+
+/* Inter var font */
+html { font-family: 'Inter', sans-serif; }
+@supports (font-variation-settings: normal) {
+  html { font-family: 'Inter var', sans-serif; }
+}
 
 @tailwind base;
 @tailwind components;
@@ -108,13 +115,6 @@
   .text-balance {
     text-wrap: balance;
   }
-}
-
-/* Inter var font */
-@import url('https://rsms.me/inter/inter.css');
-html { font-family: 'Inter', sans-serif; }
-@supports (font-variation-settings: normal) {
-  html { font-family: 'Inter var', sans-serif; }
 }
 
 /* SF Pro Display font */
