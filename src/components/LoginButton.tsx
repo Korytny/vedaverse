@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
@@ -99,12 +98,9 @@ const LoginButton = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      // Simplified Google auth - just use the current origin
+      // Simplified Google auth without any redirectTo option
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
       });
       
       if (error) throw error;

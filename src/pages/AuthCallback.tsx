@@ -13,7 +13,6 @@ const AuthCallback = () => {
     const handleAuthCallback = async () => {
       try {
         console.log('AuthCallback: Handling auth callback');
-        console.log('Current URL:', window.location.href);
         
         // Process the OAuth callback
         const { data, error } = await supabase.auth.getSession();
@@ -28,8 +27,29 @@ const AuthCallback = () => {
           toast.success('Successfully signed in!');
           navigate('/dashboard');
         } else {
-          console.log('No session found');
-          throw new Error('No session found');
+          console.log('No session found, checking for hash fragment');
+          
+          // Special handling for hash fragments that might contain auth info
+          if (window.location.hash) {
+            console.log('Hash fragment found:', window.location.hash);
+            
+            // Manually trigger session extraction from hash if needed
+            const { data: hashData, error: hashError } = await supabase.auth.getUser();
+            
+            if (hashError) {
+              console.error('Hash auth error:', hashError);
+              throw hashError;
+            }
+            
+            if (hashData.user) {
+              console.log('User found from hash:', hashData.user.email);
+              toast.success('Successfully signed in!');
+              navigate('/dashboard');
+              return;
+            }
+          }
+          
+          throw new Error('Authentication failed. No session found.');
         }
       } catch (err: any) {
         console.error('Auth callback error:', err);
