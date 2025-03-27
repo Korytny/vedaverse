@@ -74,6 +74,15 @@ const AdminEditProject = () => {
       // Here we would make an API call to update the data
       console.log('Saving project:', updatedProject);
       
+      // Update the project in projectsData (simulating a database update)
+      const projectIndex = projectsData.findIndex(p => p.id === id);
+      if (projectIndex !== -1) {
+        projectsData[projectIndex] = updatedProject;
+      }
+      
+      // Update the local state
+      setProject(updatedProject);
+      
       // Show success message
       toast.success('Project updated successfully!');
       

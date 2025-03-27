@@ -16,7 +16,8 @@ export type Project = {
 };
 
 // Shared project data - would be fetched from Supabase in real implementation
-export const projectsData: Project[] = [
+// Using let instead of const so we can modify the array
+export let projectsData: Project[] = [
   {
     id: "1",
     title: "Web Development Mastery",
