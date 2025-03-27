@@ -5,22 +5,23 @@ import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
 import { ArrowRight, Info, MessageCircle, Users, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { projectsData } from '@/data/projects';
+import { toast } from 'sonner';
+import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredCommunities, setFilteredCommunities] = useState(projectsData);
 
-  // Scroll to top on component mount
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   
   useEffect(() => {
-    // Apply search filter
     if (searchQuery) {
       const filtered = projectsData.filter(community => 
         community.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -44,7 +45,6 @@ const Index = () => {
           <FeaturesSection />
         </section>
         
-        {/* Communities Section */}
         <section id="communities" className="py-20">
           <div className="container px-4 mx-auto">
             <motion.div initial={{
@@ -85,7 +85,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Stats Section */}
         <section id="stats" className="py-20 bg-secondary/50">
           <div className="container px-4 mx-auto">
             <motion.div initial={{
@@ -112,7 +111,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* CTA Section */}
         <section className="py-20">
           <div className="container px-4 mx-auto">
             <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-3xl p-12 md:p-16 text-center max-w-5xl mx-auto">
@@ -174,7 +172,65 @@ const StatCard = ({
     </motion.div>;
 };
 
-const CommunityCardWithInfo = props => {
+const CommunityCardWithInfo = (props) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleJoin = async () => {
+    if (!user) {
+      toast.error("Please sign in to join communities");
+      navigate('/');
+      return;
+    }
+
+    try {
+      const { data: existingMembership, error: checkError } = await supabase
+        .from('user_communities')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('community_id', props.id)
+        .maybeSingle();
+      
+      if (checkError) throw checkError;
+      
+      if (existingMembership) {
+        toast.info(`You're already a member of ${props.title}`);
+        return;
+      }
+      
+      const { error: joinError } = await supabase
+        .from('user_communities')
+        .insert({
+          user_id: user.id,
+          community_id: props.id,
+          unread_messages: 0,
+          last_activity: new Date().toISOString()
+        });
+      
+      if (joinError) throw joinError;
+      
+      if (props.isPremium) {
+        toast.success(`Successfully joined premium community: ${props.title}`);
+      } else {
+        toast.success(`Successfully joined community: ${props.title}`);
+      }
+      
+      const { error: updateError } = await supabase
+        .from('communities')
+        .update({ members_count: props.members + 1 })
+        .eq('id', props.id);
+      
+      if (updateError) {
+        console.error("Error updating members count:", updateError);
+      }
+      
+      navigate('/dashboard');
+    } catch (error) {
+      console.error("Error joining community:", error);
+      toast.error(error.message || "Failed to join community");
+    }
+  };
+
   return <div className="border border-border/60 rounded-xl overflow-hidden bg-card hover:shadow-md transition-shadow">
       <div className="relative h-40">
         <img src={props.image} alt={props.title} className="w-full h-full object-cover" />
@@ -198,7 +254,7 @@ const CommunityCardWithInfo = props => {
                 Info
               </Button>
             </Link>
-            <Button size="sm">Join</Button>
+            <Button size="sm" onClick={handleJoin}>Join</Button>
           </div>
         </div>
       </div>
