@@ -90,6 +90,7 @@ export const createPost = async (
 
 export const likePost = async (postId: string): Promise<boolean> => {
   try {
+    // Fix: Use an object with named parameters for the RPC call
     const { error } = await supabase.rpc('increment_likes', { post_id: postId });
     
     if (error) throw error;
