@@ -1,21 +1,29 @@
+
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PageTransition from '@/components/PageTransition';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Users, MessageCircle, Calendar, BookOpen, Edit, Loader2 } from 'lucide-react';
+import { ArrowLeft, Users, MessageCircle, Calendar, BookOpen, Edit, Loader2, BookText } from 'lucide-react';
 import { fetchCommunityDetails, joinCommunity } from '@/utils/communityUtils';
+import { fetchCommunityPosts } from '@/utils/postUtils';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import PostItem from '@/components/PostItem';
+import CreatePostForm from '@/components/CreatePostForm';
 
 const ProjectDetails = () => {
   const { id } = useParams();
   const [community, setCommunity] = useState<any>(null);
+  const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [postsLoading, setPostsLoading] = useState(true);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("about");
 
   // Scroll to top on component mount
   useEffect(() => {
@@ -55,6 +63,27 @@ const ProjectDetails = () => {
     };
     
     loadCommunityData();
+  }, [id]);
+
+  const loadPosts = async () => {
+    if (!id) return;
+    
+    setPostsLoading(true);
+    try {
+      const postsData = await fetchCommunityPosts(id);
+      setPosts(postsData);
+    } catch (error) {
+      console.error("Error loading posts:", error);
+      toast.error("Failed to load community posts");
+    } finally {
+      setPostsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+      loadPosts();
+    }
   }, [id]);
 
   const handleJoin = async () => {
@@ -151,70 +180,158 @@ const ProjectDetails = () => {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="col-span-2">
-                <h2 className="text-2xl font-bold mb-4">About this Community</h2>
-                <p className="text-muted-foreground whitespace-pre-line mb-6">
-                  {community.shortDescription || community.longDescription || community.description}
-                </p>
-                
-                <h2 className="text-2xl font-bold mb-4">Topics Covered</h2>
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {(community.topics || []).map((topic: string, index: number) => (
-                    <span key={index} className="px-3 py-1 bg-secondary rounded-full text-sm">
-                      {topic}
-                    </span>
-                  ))}
-                  {(!community.topics || community.topics.length === 0) && (
-                    <span className="text-muted-foreground">No topics specified</span>
-                  )}
-                </div>
-              </div>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="mb-6">
+                <TabsTrigger value="about" className="flex items-center gap-2">
+                  <BookOpen className="h-4 w-4" />
+                  About
+                </TabsTrigger>
+                <TabsTrigger value="posts" className="flex items-center gap-2">
+                  <BookText className="h-4 w-4" />
+                  Posts
+                </TabsTrigger>
+              </TabsList>
               
-              <div className="bg-secondary/30 p-6 rounded-xl space-y-6">
-                <div>
-                  {community.isPremium ? (
-                    <div className="mb-4">
-                      <span className="px-3 py-1 bg-primary/20 text-primary rounded-full text-sm font-medium">
-                        Premium Community
-                      </span>
-                      <p className="mt-2 text-2xl font-bold">${community.price}/month</p>
+              <TabsContent value="about" className="mt-0">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                  <div className="col-span-2">
+                    <h2 className="text-2xl font-bold mb-4">About this Community</h2>
+                    <p className="text-muted-foreground whitespace-pre-line mb-6">
+                      {community.shortDescription || community.longDescription || community.description}
+                    </p>
+                    
+                    <h2 className="text-2xl font-bold mb-4">Topics Covered</h2>
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {(community.topics || []).map((topic: string, index: number) => (
+                        <span key={index} className="px-3 py-1 bg-secondary rounded-full text-sm">
+                          {topic}
+                        </span>
+                      ))}
+                      {(!community.topics || community.topics.length === 0) && (
+                        <span className="text-muted-foreground">No topics specified</span>
+                      )}
                     </div>
-                  ) : (
-                    <div className="mb-4">
-                      <span className="px-3 py-1 bg-green-500/20 text-green-600 rounded-full text-sm font-medium">
-                        Free Community
-                      </span>
-                    </div>
-                  )}
+                  </div>
                   
-                  <Button className="w-full" onClick={handleJoin}>Join Community</Button>
-                </div>
-                
-                <div className="border-t border-border pt-4">
-                  <h3 className="font-medium mb-3">Community Stats</h3>
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <Users className="h-5 w-5 text-muted-foreground" />
-                      <span>{(community.members || community.members_count || 0).toLocaleString()} Members</span>
+                  <div className="bg-secondary/30 p-6 rounded-xl space-y-6">
+                    <div>
+                      {community.isPremium ? (
+                        <div className="mb-4">
+                          <span className="px-3 py-1 bg-primary/20 text-primary rounded-full text-sm font-medium">
+                            Premium Community
+                          </span>
+                          <p className="mt-2 text-2xl font-bold">${community.price}/month</p>
+                        </div>
+                      ) : (
+                        <div className="mb-4">
+                          <span className="px-3 py-1 bg-green-500/20 text-green-600 rounded-full text-sm font-medium">
+                            Free Community
+                          </span>
+                        </div>
+                      )}
+                      
+                      <Button className="w-full" onClick={handleJoin}>Join Community</Button>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <MessageCircle className="h-5 w-5 text-muted-foreground" />
-                      <span>{(community.messages || 0).toLocaleString()} Messages</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <BookOpen className="h-5 w-5 text-muted-foreground" />
-                      <span>{community.posts || community.resources || 0} Posts</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Calendar className="h-5 w-5 text-muted-foreground" />
-                      <span>Created {new Date(community.createdAt || community.created_at).toLocaleDateString()}</span>
+                    
+                    <div className="border-t border-border pt-4">
+                      <h3 className="font-medium mb-3">Community Stats</h3>
+                      
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <Users className="h-5 w-5 text-muted-foreground" />
+                          <span>{(community.members || community.members_count || 0).toLocaleString()} Members</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <MessageCircle className="h-5 w-5 text-muted-foreground" />
+                          <span>{(community.messages || 0).toLocaleString()} Messages</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <BookOpen className="h-5 w-5 text-muted-foreground" />
+                          <span>{community.posts || community.resources || 0} Posts</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Calendar className="h-5 w-5 text-muted-foreground" />
+                          <span>Created {new Date(community.createdAt || community.created_at).toLocaleDateString()}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </TabsContent>
+              
+              <TabsContent value="posts" className="mt-0">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                  <div className="col-span-2">
+                    {user && (
+                      <CreatePostForm 
+                        communityId={id || ''} 
+                        onPostCreated={loadPosts} 
+                      />
+                    )}
+                    
+                    {postsLoading ? (
+                      <div className="text-center py-12">
+                        <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
+                        <p>Loading posts...</p>
+                      </div>
+                    ) : posts.length > 0 ? (
+                      <div>
+                        {posts.map((post, index) => (
+                          <PostItem 
+                            key={post.id} 
+                            post={post} 
+                            isPinned={index < 2} // Pin first two posts for demo
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-12 bg-secondary/30 rounded-xl">
+                        <h3 className="text-xl font-medium mb-2">No posts yet</h3>
+                        <p className="text-muted-foreground mb-4">Be the first to share something with the community!</p>
+                        {!user && (
+                          <Button onClick={handleJoin}>Join Community to Post</Button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="bg-secondary/30 p-6 rounded-xl space-y-6 h-fit">
+                    <div>
+                      <h3 className="font-medium mb-3">About this Community</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        {community.shortDescription || community.longDescription || community.description}
+                      </p>
+                      
+                      {!user && (
+                        <Button className="w-full" onClick={handleJoin}>Join Community</Button>
+                      )}
+                    </div>
+                    
+                    <div className="border-t border-border pt-4">
+                      <h3 className="font-medium mb-3">Community Rules</h3>
+                      <ul className="space-y-2 text-sm">
+                        <li className="flex items-start gap-2">
+                          <span className="font-medium">1.</span>
+                          <span>Be respectful to other members</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="font-medium">2.</span>
+                          <span>Stay on topic with relevant content</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="font-medium">3.</span>
+                          <span>No spam or self-promotion</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="font-medium">4.</span>
+                          <span>Share knowledge and help others</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
         </main>
       </PageTransition>
