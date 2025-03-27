@@ -185,18 +185,28 @@ const CommunityCardWithInfo = (props) => {
     }
 
     try {
-      // Validate that we have a proper UUID for the community_id
-      // In sample data, IDs might be numbers, so we need to convert them to proper UUIDs
-      // This assumes your real database uses UUIDs
-      const communityId = typeof props.id === 'string' && 
-                          props.id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i) 
-                          ? props.id 
-                          : null;
+      // First, check if the community exists in the database
+      const { data: existingCommunity, error: communityCheckError } = await supabase
+        .from('communities')
+        .select('id')
+        .eq('id', props.id)
+        .maybeSingle();
       
-      if (!communityId) {
-        console.error(`Invalid UUID format for community ID: ${props.id}`);
-        toast.error("Invalid community ID format");
-        return;
+      if (communityCheckError) throw communityCheckError;
+      
+      // If community doesn't exist in the database, create it first
+      if (!existingCommunity) {
+        const { error: createCommunityError } = await supabase
+          .from('communities')
+          .insert({
+            id: props.id,
+            name: props.title,
+            description: props.description,
+            image_url: props.image,
+            members_count: props.members
+          });
+        
+        if (createCommunityError) throw createCommunityError;
       }
       
       // Check if the user is already a member of this community
@@ -204,7 +214,7 @@ const CommunityCardWithInfo = (props) => {
         .from('user_communities')
         .select('id')
         .eq('user_id', user.id)
-        .eq('community_id', communityId)
+        .eq('community_id', props.id)
         .maybeSingle();
       
       if (checkError) throw checkError;
@@ -219,7 +229,7 @@ const CommunityCardWithInfo = (props) => {
         .from('user_communities')
         .insert({
           user_id: user.id,
-          community_id: communityId,
+          community_id: props.id,
           unread_messages: 0,
           last_activity: new Date().toISOString()
         });
@@ -237,7 +247,7 @@ const CommunityCardWithInfo = (props) => {
       const { error: updateError } = await supabase
         .from('communities')
         .update({ members_count: props.members + 1 })
-        .eq('id', communityId);
+        .eq('id', props.id);
       
       if (updateError) {
         console.error("Error updating members count:", updateError);

@@ -40,24 +40,36 @@ const CommunityCard = ({
     }
 
     try {
-      // Validate that we have a proper UUID for the community_id
-      const communityId = typeof id === 'string' && 
-                          id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i) 
-                          ? id 
-                          : null;
+      // First, check if the community exists in the database
+      const { data: existingCommunity, error: communityCheckError } = await supabase
+        .from('communities')
+        .select('id')
+        .eq('id', id)
+        .maybeSingle();
       
-      if (!communityId) {
-        console.error(`Invalid UUID format for community ID: ${id}`);
-        toast.error("Invalid community ID format");
-        return;
+      if (communityCheckError) throw communityCheckError;
+      
+      // If community doesn't exist in the database, create it first
+      if (!existingCommunity) {
+        const { error: createCommunityError } = await supabase
+          .from('communities')
+          .insert({
+            id: id,
+            name: title,
+            description: description,
+            image_url: image,
+            members_count: members
+          });
+        
+        if (createCommunityError) throw createCommunityError;
       }
       
-      // Check if user is already a member
+      // Now check if user is already a member
       const { data: existingMembership, error: checkError } = await supabase
         .from('user_communities')
         .select('id')
         .eq('user_id', user.id)
-        .eq('community_id', communityId)
+        .eq('community_id', id)
         .maybeSingle();
       
       if (checkError) throw checkError;
@@ -72,7 +84,7 @@ const CommunityCard = ({
         .from('user_communities')
         .insert({
           user_id: user.id,
-          community_id: communityId,
+          community_id: id,
           unread_messages: 0,
           last_activity: new Date().toISOString()
         });
@@ -90,7 +102,7 @@ const CommunityCard = ({
       const { error: updateError } = await supabase
         .from('communities')
         .update({ members_count: members + 1 })
-        .eq('id', communityId);
+        .eq('id', id);
       
       if (updateError) {
         console.error("Error updating members count:", updateError);
