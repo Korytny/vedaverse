@@ -9,6 +9,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,6 +29,19 @@ const Navbar = () => {
     ${isScrolled ? 'glass py-3' : 'bg-transparent'}
   `;
 
+  const scrollToSection = (id) => {
+    setIsMobileMenuOpen(false);
+    if (isHomePage) {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // If not on home page, navigate to home and then scroll
+      window.location.href = `/#${id}`;
+    }
+  };
+
   return (
     <nav className={navbarClasses}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -44,9 +58,10 @@ const Navbar = () => {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-8">
           <div className="flex items-center space-x-6">
-            <NavLink to="/">Home</NavLink>
-            <NavLink to="/communities">Communities</NavLink>
-            <NavLink to="/pricing">Pricing</NavLink>
+            <NavItem onClick={() => scrollToSection('hero')}>Home</NavItem>
+            <NavItem onClick={() => scrollToSection('features')}>Features</NavItem>
+            <NavItem onClick={() => scrollToSection('communities')}>Communities</NavItem>
+            <NavItem onClick={() => scrollToSection('stats')}>Stats</NavItem>
           </div>
           <div className="flex items-center space-x-3">
             <LoginButton />
@@ -77,9 +92,10 @@ const Navbar = () => {
           transition={{ duration: 0.3, ease: "easeInOut" }}
         >
           <div className="container mx-auto py-6 flex flex-col space-y-8 text-center">
-            <MobileNavLink to="/">Home</MobileNavLink>
-            <MobileNavLink to="/communities">Communities</MobileNavLink>
-            <MobileNavLink to="/pricing">Pricing</MobileNavLink>
+            <MobileNavItem onClick={() => scrollToSection('hero')}>Home</MobileNavItem>
+            <MobileNavItem onClick={() => scrollToSection('features')}>Features</MobileNavItem>
+            <MobileNavItem onClick={() => scrollToSection('communities')}>Communities</MobileNavItem>
+            <MobileNavItem onClick={() => scrollToSection('stats')}>Stats</MobileNavItem>
             <div className="pt-4">
               <LoginButton />
             </div>
@@ -90,38 +106,25 @@ const Navbar = () => {
   );
 };
 
-const NavLink = ({ to, children }: { to: string; children: React.ReactNode }) => {
-  const location = useLocation();
-  const isActive = location.pathname === to;
-  
+const NavItem = ({ children, onClick }) => {
   return (
-    <Link 
-      to={to} 
-      className={`relative text-sm font-medium transition-colors hover:text-foreground/80 ${isActive ? 'text-foreground' : 'text-foreground/60'}`}
+    <button 
+      onClick={onClick}
+      className="relative text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
     >
       {children}
-      {isActive && (
-        <motion.div
-          className="absolute -bottom-1 left-0 right-0 h-0.5 bg-foreground rounded-full"
-          layoutId="navbar-indicator"
-          transition={{ type: 'spring', duration: 0.6, bounce: 0.2 }}
-        />
-      )}
-    </Link>
+    </button>
   );
 };
 
-const MobileNavLink = ({ to, children }: { to: string; children: React.ReactNode }) => {
-  const location = useLocation();
-  const isActive = location.pathname === to;
-  
+const MobileNavItem = ({ children, onClick }) => {
   return (
-    <Link 
-      to={to} 
-      className={`text-xl font-medium ${isActive ? 'text-white' : 'text-white/70'}`}
+    <button 
+      onClick={onClick}
+      className="text-xl font-medium text-white/70 hover:text-white"
     >
       {children}
-    </Link>
+    </button>
   );
 };
 
