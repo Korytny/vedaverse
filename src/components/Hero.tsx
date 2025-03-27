@@ -44,7 +44,7 @@ const Hero = () => {
             <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tight mb-6 text-balance">Цифровая вселенная ведических проектов</h1>
           </motion.div>
           <motion.div variants={item}>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 text-balance">Здесь вы сможете присоединиться к ведической движухе</p>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 text-balance">Здесь вы сможете присоединиться к ведическому движению</p>
           </motion.div>
           <motion.div variants={item} className="flex flex-col sm:flex-row justify-center items-center gap-4">
             <Button onClick={() => navigate('/communities')} size="lg" className="rounded-full px-8 text-base h-12">Изучить сообщество</Button>
