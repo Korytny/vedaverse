@@ -41,7 +41,7 @@ const Hero = () => {
       <div className="container px-4 mx-auto max-w-6xl">
         <motion.div variants={container} initial="hidden" animate="show" className="text-center max-w-4xl mx-auto">
           <motion.div variants={item}>
-            <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tight mb-6 text-balance">Цифровая платформа ведических проектов</h1>
+            <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tight mb-6 text-balance">Цифровая вселенная ведических проектов</h1>
           </motion.div>
           <motion.div variants={item}>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 text-balance">Здесь вы сможете присоединиться к ведической движухе</p>
