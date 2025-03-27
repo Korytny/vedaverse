@@ -12,6 +12,7 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
+        console.log('Handling auth callback');
         // Process the OAuth callback or email confirmation
         const { data, error } = await supabase.auth.getSession();
         
@@ -20,6 +21,7 @@ const AuthCallback = () => {
         }
         
         if (data.session) {
+          console.log('Session found');
           toast.success('Successfully signed in!');
           navigate('/dashboard');
         } else {
@@ -28,6 +30,7 @@ const AuthCallback = () => {
           const accessToken = params.get('access_token');
           
           if (accessToken) {
+            console.log('Access token found in hash, exchanging token');
             // If we have an access_token in the hash, attempt to exchange it
             const { data, error } = await supabase.auth.getUser(accessToken);
             if (error) throw error;
@@ -35,6 +38,7 @@ const AuthCallback = () => {
             toast.success('Successfully signed in!');
             navigate('/dashboard');
           } else {
+            console.log('No session found');
             throw new Error('No session found');
           }
         }
