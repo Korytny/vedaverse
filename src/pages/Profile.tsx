@@ -19,8 +19,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { LogOut, Upload, User, Mail, Phone } from 'lucide-react';
 
 // Initialize Supabase client
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
+// Check if environment variables are set
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error("Missing Supabase environment variables. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
+}
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
@@ -34,10 +39,18 @@ const profileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
+// Update the interface for profileData to include avatar_url
+interface ProfileData {
+  fullName: string;
+  phone: string;
+  bio: string;
+  avatar_url?: string;
+}
+
 const Profile = () => {
   const { user, signOut, refreshUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [profileData, setProfileData] = useState<{ fullName: string, phone: string, bio: string } | null>(null);
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const navigate = useNavigate();
 
   const form = useForm<ProfileFormValues>({
