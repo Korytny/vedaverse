@@ -40,12 +40,24 @@ const CommunityCard = ({
     }
 
     try {
+      // Validate that we have a proper UUID for the community_id
+      const communityId = typeof id === 'string' && 
+                          id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i) 
+                          ? id 
+                          : null;
+      
+      if (!communityId) {
+        console.error(`Invalid UUID format for community ID: ${id}`);
+        toast.error("Invalid community ID format");
+        return;
+      }
+      
       // Check if user is already a member
       const { data: existingMembership, error: checkError } = await supabase
         .from('user_communities')
         .select('id')
         .eq('user_id', user.id)
-        .eq('community_id', id)
+        .eq('community_id', communityId)
         .maybeSingle();
       
       if (checkError) throw checkError;
@@ -60,7 +72,7 @@ const CommunityCard = ({
         .from('user_communities')
         .insert({
           user_id: user.id,
-          community_id: id,
+          community_id: communityId,
           unread_messages: 0,
           last_activity: new Date().toISOString()
         });
@@ -78,7 +90,7 @@ const CommunityCard = ({
       const { error: updateError } = await supabase
         .from('communities')
         .update({ members_count: members + 1 })
-        .eq('id', id);
+        .eq('id', communityId);
       
       if (updateError) {
         console.error("Error updating members count:", updateError);

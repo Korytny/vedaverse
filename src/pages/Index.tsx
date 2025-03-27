@@ -1,3 +1,4 @@
+
 import Hero from '@/components/Hero';
 import Navbar from '@/components/Navbar';
 import FeaturesSection from '@/components/FeaturesSection';
@@ -184,11 +185,26 @@ const CommunityCardWithInfo = (props) => {
     }
 
     try {
+      // Validate that we have a proper UUID for the community_id
+      // In sample data, IDs might be numbers, so we need to convert them to proper UUIDs
+      // This assumes your real database uses UUIDs
+      const communityId = typeof props.id === 'string' && 
+                          props.id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i) 
+                          ? props.id 
+                          : null;
+      
+      if (!communityId) {
+        console.error(`Invalid UUID format for community ID: ${props.id}`);
+        toast.error("Invalid community ID format");
+        return;
+      }
+      
+      // Check if the user is already a member of this community
       const { data: existingMembership, error: checkError } = await supabase
         .from('user_communities')
         .select('id')
         .eq('user_id', user.id)
-        .eq('community_id', props.id)
+        .eq('community_id', communityId)
         .maybeSingle();
       
       if (checkError) throw checkError;
@@ -198,32 +214,36 @@ const CommunityCardWithInfo = (props) => {
         return;
       }
       
+      // Add the user to the community
       const { error: joinError } = await supabase
         .from('user_communities')
         .insert({
           user_id: user.id,
-          community_id: props.id,
+          community_id: communityId,
           unread_messages: 0,
           last_activity: new Date().toISOString()
         });
       
       if (joinError) throw joinError;
       
+      // Success message
       if (props.isPremium) {
         toast.success(`Successfully joined premium community: ${props.title}`);
       } else {
         toast.success(`Successfully joined community: ${props.title}`);
       }
       
+      // Update member count
       const { error: updateError } = await supabase
         .from('communities')
         .update({ members_count: props.members + 1 })
-        .eq('id', props.id);
+        .eq('id', communityId);
       
       if (updateError) {
         console.error("Error updating members count:", updateError);
       }
       
+      // Navigate to dashboard
       navigate('/dashboard');
     } catch (error) {
       console.error("Error joining community:", error);
