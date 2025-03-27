@@ -1,42 +1,12 @@
+
 import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PageTransition from '@/components/PageTransition';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Users, MessageCircle, Calendar, BookOpen } from 'lucide-react';
-
-// Mock data - would be fetched from Supabase in real implementation
-const projectsData = [
-  {
-    id: "1",
-    title: "Web Development Mastery",
-    description: "Learn modern web development with expert mentors and a supportive community. Covers React, Node.js, and more.",
-    members: 2543,
-    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop",
-    isPremium: false,
-    createdAt: "2023-06-15",
-    topics: ["React", "JavaScript", "Node.js", "HTML/CSS"],
-    messages: 15243,
-    resources: 124,
-    longDescription: "Our Web Development Mastery community is designed for aspiring and established developers who want to improve their skills in modern web technologies. Whether you're just starting out or looking to level up your expertise, our community provides a supportive environment for learning and collaboration.\n\nOur expert mentors have years of industry experience and are committed to helping you succeed. Regular code reviews, pair programming sessions, and personalized feedback are just some of the ways our mentors support your learning journey.\n\nJoin us to access comprehensive learning resources, participate in engaging discussions, and connect with a global network of developers who are passionate about web development.",
-  },
-  {
-    id: "2",
-    title: "Design Thinking Pro",
-    description: "Elevate your design skills with feedback from industry professionals. Includes UX/UI design principles and case studies.",
-    members: 1872,
-    image: "https://images.unsplash.com/photo-1613909207039-6b173b755cc1?q=80&w=2072&auto=format&fit=crop",
-    isPremium: true,
-    price: 29.99,
-    createdAt: "2023-08-22",
-    topics: ["UI/UX", "Design Principles", "Prototyping", "User Research"],
-    messages: 8762,
-    resources: 86,
-    longDescription: "Design Thinking Pro is the premier community for designers who want to take their skills to the next level. Our community brings together UI/UX designers, product designers, and design enthusiasts from around the world to share ideas, provide feedback, and collaborate on projects.\n\nWith access to industry professionals who provide regular feedback and guidance, you'll be able to refine your design process and create more effective, user-centered designs. Our case studies and design challenges provide real-world practice opportunities, while our resource library contains valuable templates, tools, and research materials.\n\nJoin Design Thinking Pro to elevate your design career and connect with a community of like-minded creatives who are passionate about great design."
-  },
-  // ... other projects
-];
+import { ArrowLeft, Users, MessageCircle, Calendar, BookOpen, Edit } from 'lucide-react';
+import { projectsData } from '@/data/projects';
 
 const ProjectDetails = () => {
   const { id } = useParams();
@@ -72,12 +42,21 @@ const ProjectDetails = () => {
       <PageTransition className="flex-grow pt-20">
         <main className="container px-4 py-12">
           <div className="mb-8">
-            <Button variant="ghost" asChild className="mb-4">
-              <Link to="/" className="flex items-center gap-2">
-                <ArrowLeft className="h-4 w-4" />
-                Back to Communities
-              </Link>
-            </Button>
+            <div className="flex justify-between items-center mb-4">
+              <Button variant="ghost" asChild>
+                <Link to="/" className="flex items-center gap-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to Communities
+                </Link>
+              </Button>
+              
+              <Button variant="outline" asChild>
+                <Link to={`/admin/edit-project/${id}`} className="flex items-center gap-2">
+                  <Edit className="h-4 w-4" />
+                  Edit Project
+                </Link>
+              </Button>
+            </div>
             
             <div className="relative h-60 md:h-80 w-full rounded-xl overflow-hidden mb-6">
               <img 

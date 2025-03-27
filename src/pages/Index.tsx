@@ -7,73 +7,31 @@ import { ArrowRight, Info, MessageCircle, Users, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import CommunityCard from '@/components/CommunityCard';
 import { Input } from '@/components/ui/input';
+import { projectsData } from '@/data/projects';
 
-// Mock community data - would be fetched from Supabase in real implementation
-const communitiesData = [{
-  id: "1",
-  title: "Web Development Mastery",
-  description: "Learn modern web development with expert mentors and a supportive community. Covers React, Node.js, and more.",
-  members: 2543,
-  image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop",
-  isPremium: false
-}, {
-  id: "2",
-  title: "Design Thinking Pro",
-  description: "Elevate your design skills with feedback from industry professionals. Includes UX/UI design principles and case studies.",
-  members: 1872,
-  image: "https://images.unsplash.com/photo-1613909207039-6b173b755cc1?q=80&w=2072&auto=format&fit=crop",
-  isPremium: true,
-  price: 29.99
-}, {
-  id: "3",
-  title: "Data Science Community",
-  description: "Master data analysis and machine learning with practical projects and expert guidance.",
-  members: 3215,
-  image: "https://images.unsplash.com/photo-1543286386-2e659306cd6c?q=80&w=2070&auto=format&fit=crop",
-  isPremium: false
-}, {
-  id: "4",
-  title: "Entrepreneurship Guild",
-  description: "Connect with founders and business experts to accelerate your startup journey.",
-  members: 1432,
-  image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=2070&auto=format&fit=crop",
-  isPremium: true,
-  price: 49.99
-}, {
-  id: "5",
-  title: "Creative Writing Workshop",
-  description: "Develop your writing skills with structured feedback and community support.",
-  members: 987,
-  image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=2073&auto=format&fit=crop",
-  isPremium: false
-}, {
-  id: "6",
-  title: "AI & Machine Learning Pro",
-  description: "Dive deep into artificial intelligence with hands-on projects and expert mentorship.",
-  members: 2145,
-  image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2145&auto=format&fit=crop",
-  isPremium: true,
-  price: 39.99
-}];
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredCommunities, setFilteredCommunities] = useState(communitiesData);
+  const [filteredCommunities, setFilteredCommunities] = useState(projectsData);
 
   // Scroll to top on component mount
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+  
   useEffect(() => {
     // Apply search filter
     if (searchQuery) {
-      const filtered = communitiesData.filter(community => community.title.toLowerCase().includes(searchQuery.toLowerCase()) || community.description.toLowerCase().includes(searchQuery.toLowerCase()));
+      const filtered = projectsData.filter(community => 
+        community.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        community.description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
       setFilteredCommunities(filtered);
     } else {
-      setFilteredCommunities(communitiesData);
+      setFilteredCommunities(projectsData);
     }
   }, [searchQuery]);
+  
   return <div className="min-h-screen flex flex-col">
       <Navbar />
       
@@ -102,7 +60,7 @@ const Index = () => {
             ease: [0.16, 1, 0.3, 1]
           }} className="text-center max-w-3xl mx-auto mb-12">
               <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Изучите сообщество</h2>
-              <p className="text-lg text-muted-foreground">Каждый проект это звезда в нашем созвездии  </p>
+              <p className="text-lg text-muted-foreground">Каждый проект это звезда в нашем созвездии  </p>
               
               <div className="relative max-w-lg mx-auto mt-8">
                 <Input placeholder="Search communities..." className="pl-10" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
@@ -188,6 +146,7 @@ const Index = () => {
       <Footer />
     </div>;
 };
+
 const StatCard = ({
   icon,
   value,
@@ -214,6 +173,7 @@ const StatCard = ({
       <p className="text-muted-foreground">{label}</p>
     </motion.div>;
 };
+
 const CommunityCardWithInfo = props => {
   return <div className="border border-border/60 rounded-xl overflow-hidden bg-card hover:shadow-md transition-shadow">
       <div className="relative h-40">
@@ -244,4 +204,5 @@ const CommunityCardWithInfo = props => {
       </div>
     </div>;
 };
+
 export default Index;
