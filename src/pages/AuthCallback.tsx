@@ -23,10 +23,16 @@ const AuthCallback = () => {
           toast.success('Successfully signed in!');
           navigate('/dashboard');
         } else {
-          // If no session but no error, it might be an email confirmation success
-          const hash = window.location.hash;
-          if (hash && hash.includes('access_token')) {
-            toast.success('Email confirmed successfully!');
+          // Check for hash parameters which might indicate OAuth sign-in
+          const params = new URLSearchParams(window.location.hash.substring(1));
+          const accessToken = params.get('access_token');
+          
+          if (accessToken) {
+            // If we have an access_token in the hash, attempt to exchange it
+            const { data, error } = await supabase.auth.getUser(accessToken);
+            if (error) throw error;
+            
+            toast.success('Successfully signed in!');
             navigate('/dashboard');
           } else {
             throw new Error('No session found');
