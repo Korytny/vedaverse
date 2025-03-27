@@ -4,21 +4,41 @@ import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { createClient } from '@supabase/supabase-js';
+import { User } from 'lucide-react';
+
+// Initialize Supabase client
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const LoginButton = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    // This is a placeholder for Google Auth
-    // In a real implementation, we would connect to Supabase for auth
     setIsLoading(true);
     
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
+      // This won't be called immediately as OAuth will redirect the browser
       toast.success('Successfully logged in!');
-      navigate('/dashboard');
-    }, 1500);
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Failed to sign in with Google');
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -40,7 +60,10 @@ const LoginButton = () => {
             <span>Connecting...</span>
           </div>
         ) : (
-          <span>Sign In</span>
+          <div className="flex items-center gap-1.5">
+            <User size={16} />
+            <span>Sign In</span>
+          </div>
         )}
       </Button>
     </motion.div>
