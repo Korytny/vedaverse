@@ -114,14 +114,16 @@ const MediaItem = ({ item, className, onClick }: { item: MediaItemType, classNam
   }
 
   return (
-    <img
-      src={item.url}
-      alt={item.title}
-      className={`${className} object-cover cursor-pointer`}
-      onClick={onClick}
-      loading="lazy"
-      decoding="async"
-    />
+    <div className={`${className} overflow-hidden`}>
+      <img
+        src={item.url}
+        alt={item.title}
+        className="w-full h-full object-cover cursor-pointer"
+        onClick={onClick}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
   );
 };
 

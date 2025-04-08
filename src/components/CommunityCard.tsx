@@ -65,11 +65,11 @@ const CommunityCard = ({
       transition={{ duration: 0.3 }}
     >
       <Card className="overflow-hidden h-full flex flex-col">
-        <div className="relative h-48 overflow-hidden">
-          <img 
-            src={image} 
-            alt={title} 
-            className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+        <div className="relative h-48 w-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden">
+          <img
+            src={image}
+            alt={title}
+            className="max-w-full max-h-full object-contain transition-transform duration-700 hover:scale-105"
           />
           {isPremium && (
             <div className="absolute top-4 right-4">

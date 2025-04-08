@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Hero from '@/components/Hero';
 import Navbar from '@/components/Navbar';
 import FeaturesSection from '@/components/FeaturesSection';
+import MainGallery from '@/components/MainGallery';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
 import { ArrowRight, Info, MessageCircle, Users, BookOpen } from 'lucide-react';
@@ -9,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import Mission from "@/components/Mission";
-import GalleryDemo from '@/components/ui/gallery-demo';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -44,11 +44,11 @@ const CommunityCardWithInfo = (props: any) => {
   return (
     <div className="border border-border/60 rounded-xl overflow-hidden bg-card hover:shadow-md transition-shadow">
       <div className="relative aspect-video bg-gray-100 overflow-hidden">
-        <Link to={`/project/${props.id}`} className="absolute inset-0 flex items-center justify-center p-1">
+        <Link to={`/project/${props.id}`} className="absolute inset-0">
           <img
             src={props.image_url}
             alt={props.name}
-            className="h-auto w-auto max-w-full max-h-full object-contain cursor-pointer"
+            className="absolute inset-0 w-full h-full object-cover cursor-pointer"
           />
         </Link>
         {props.is_premium && (
@@ -183,11 +183,7 @@ const Index = () => {
           </div>
         </section>
         <Mission />
-        <section className="py-12 bg-white">
-          <div className="container mx-auto px-4">
-            <GalleryDemo />
-          </div>
-        </section>
+        <MainGallery />
         
         <section className="py-20">
           <div className="container px-4 mx-auto">
