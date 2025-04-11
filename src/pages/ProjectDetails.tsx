@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import PageTransition from '@/components/PageTransition';
+import PageTransition from '@/components/PageTransition';  
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Users, MessageCircle, Calendar, BookOpen, Edit, Loader2, BookText } from 'lucide-react';
 import { fetchCommunityDetails, joinCommunity } from '@/utils/communityUtils';
@@ -12,6 +12,7 @@ import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { leaveCommunity } from '@/utils/communityUtils';
 import PostItem from '@/components/PostItem';
 import CreatePostForm from '@/components/CreatePostForm';
 
@@ -50,8 +51,8 @@ const ProjectDetails = () => {
             ...communityData,
             title: communityData.name,
             image: communityData.image_url,
-            longDescription: communityData.description,
-            shortDescription: communityData.short_description,
+            longDescription: communityData.description, // Map description to longDescription
+            shortDescription: communityData.short_description, // Map short_description to shortDescription
             members: communityData.members_count || 0,
             topics: communityData.topics || [],
             isPremium: false,
@@ -113,6 +114,26 @@ const ProjectDetails = () => {
     );
 
     if (result) {
+      navigate('/dashboard');
+    }
+  };
+
+  const handleLeave = async () => {
+    if (!user) {
+      toast.error("Please sign in to leave communities");
+      navigate('/');
+      return;
+    }
+
+    if (!community) return;
+
+    const result = await leaveCommunity(
+      community.id,
+      user.id,
+    );
+
+    if (result) {
+      toast.success("You have left the community.");
       navigate('/dashboard');
     }
   };
@@ -184,8 +205,9 @@ const ProjectDetails = () => {
               
               <div className="md:w-1/2 space-y-4">
                 <h1 className="text-3xl md:text-4xl font-display font-bold">{community.title || community.name}</h1>
-                <p className="text-muted-foreground mb-4">
-                  {community.shortDescription || community.description}
+                {/* Display short description below the title */}
+                <p className="text-lg text-muted-foreground mb-4">
+                  {community.shortDescription}
                 </p>
                 
                 <div className="flex items-center gap-4 mb-4">
@@ -201,8 +223,13 @@ const ProjectDetails = () => {
                       Free Community
                     </span>
                   )}
-                  
-                  <Button className="ml-auto" onClick={handleJoin}>Join Community</Button>
+                {user && community.members && community.members.some(member => String(member?.id) === String(user?.id) || String(member?.user_id) === String(user?.id)) ? (
+                    <Button className="ml-auto" variant="destructive" onClick={handleLeave}>
+                        Leave Community
+                    </Button>
+                ) : (
+                    <Button className="ml-auto" onClick={handleJoin}>Join Community</Button>
+                )}
                 </div>
                 
                 <div className="border-t border-border pt-4">
@@ -246,9 +273,10 @@ const ProjectDetails = () => {
             <div className="w-full">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div className="col-span-2">
+                  {/* Updated "About this Community" section */}                  
                   <h2 className="text-2xl font-bold mb-4">About this Community</h2>
                   <p className="text-muted-foreground whitespace-pre-line mb-6">
-                    {community.shortDescription || community.longDescription || community.description}
+                    {community.longDescription || community.description} {/* Display full description here */} 
                   </p>
                   
                   <div className="mt-8">

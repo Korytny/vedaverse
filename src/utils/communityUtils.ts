@@ -138,3 +138,48 @@ export const fetchCommunities = async () => {
     return [];
   }
 };
+
+export const leaveCommunity = async (communityId: string, userId: string) => {
+  try {
+    // 1. Remove the user from the community
+    const { error: leaveError } = await supabase
+      .from('user_communities')
+      .delete()
+      .eq('user_id', userId)
+      .eq('community_id', communityId);
+
+    if (leaveError) throw leaveError;
+
+    // 2. Decrement the members count (optional, but good practice)
+    // First, get the current count
+    const { data: community, error: fetchError } = await supabase
+      .from('communities')
+      .select('members_count, name') // Select name for the toast message
+      .eq('id', communityId)
+      .single(); // Use single() as we expect exactly one community
+
+    if (fetchError) {
+      console.error("Error fetching community count before decrementing:", fetchError);
+      // Proceed even if count update fails, the user has left
+    } else if (community && community.members_count > 0) {
+      // Decrement count only if it's greater than 0
+      const { error: updateError } = await supabase
+        .from('communities')
+        .update({ members_count: community.members_count - 1 })
+        .eq('id', communityId);
+
+      if (updateError) {
+        console.error("Error updating members count:", updateError);
+        // Log the error but don't throw, leaving is the primary action
+      }
+    }
+
+    toast.success(`Successfully left community: ${community?.name || 'the community'}`);
+    return true;
+
+  } catch (error: any) {
+    console.error("Error leaving community:", error);
+    toast.error(error.message || "Failed to leave community");
+    return false;
+  }
+};
