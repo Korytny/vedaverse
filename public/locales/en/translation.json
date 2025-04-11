@@ -1,0 +1,80 @@
+{
+  "appName": "Veda Universe",
+  "nav": {
+    "home": "Home",
+    "communities": "Communities",
+    "pricing": "Pricing",
+    "login": "Login",
+    "logout": "Logout",
+    "dashboard": "Dashboard",
+    "profileSettings": "Profile Settings"
+  },
+   "hero": {
+    "title": "Digital universe of Vedic projects",
+    "subtitle": "Explore communities, knowledge and tools for spiritual growth.",
+    "ctaButton": "Explore Communities"
+  },
+  "buttons": {
+      "joinCommunity": "Join Community",
+      "leaveCommunity": "Leave Community",
+      "editCommunity": "Edit Community",
+      "signInToJoin": "Sign in to Join",
+      "signInToPost": "Sign in to Post",
+      "joinToPost": "Join Community to Post",
+      "backToCommunities": "Back to Communities",
+      "backToHome": "Back to Home"
+  },
+  "community": {
+      "loading": "Loading community details...",
+      "loadError": "Failed to load community details",
+      "loadPostsError": "Failed to load community posts", 
+      "signInToJoinInfo": "Please sign in to join communities.",
+      "notFound": "Community Not Found",
+      "notFoundDesc": "The community you're looking for doesn't exist or could not be loaded.",
+      "premium": "Premium Community",
+      "free": "Free Community",
+      "stats": "Community Stats",
+      "members": "{{count}} Members",
+      "posts": "{{count}} Posts",
+      "created": "Created {{date}}",
+      "topics": "Topics Covered",
+      "noTopics": "No topics specified",
+      "about": "About this Community",
+      "noDescription": "No description provided.",
+      "communityPosts": "Community Posts",
+      "loadingPosts": "Loading posts...",
+      "noPosts": "No posts yet",
+      "firstPost": "Be the first to share something with the community!",
+      "rules": "Community Rules",
+      "checkingMembership": "Checking...",
+      "joinSuccess": "Successfully joined {{name}}!",
+      "leaveSuccess": "You have left {{name}}.",
+      "joinError": "Failed to join community.",
+      "leaveError": "Failed to leave community.",
+      "membershipError": "Could not verify membership status.",
+      "defaultTitle": "Community" 
+  },
+  "communityCard": {
+      "premium": "Premium",
+      "members": "{{count}} members",
+      "moreTopics": "+{{count}} more",
+      "joinFree": "Join for Free",
+      "joinPremium": "Join for ${{price}}/mo"
+  },
+  "index": {
+    "loadMissionError": "Failed to load mission data.",
+    "loadCommunitiesError": "Failed to load communities",
+    "communitiesTitle": "Explore Communities",
+    "loadingCommunities": "Loading communities...",
+    "noCommunitiesFound": "No communities found",
+    "checkBackLater": "Please check back later.",
+    "ctaTitle": "Ready to Explore Veda Universe?",
+    "ctaSubtitle": "Join communities, access knowledge, and start your journey today.",
+    "ctaButton": "Get Started"
+  },
+  "mission": {
+    "sectionTitle": "Our Mission",
+    "loading": "Loading mission...",
+    "noData": "Mission data is currently unavailable."
+  }
+}

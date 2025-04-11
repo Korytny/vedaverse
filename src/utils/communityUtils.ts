@@ -4,50 +4,37 @@ export const fetchCommunityDetails = async (communityId: string) => {
   try {
     const { data: communityData, error: communityError } = await supabase
       .from('communities')
+      // Select needed fields, excluding non-existent ones
       .select(`
-        *,
+        id, name, description, short_description, members_count, image_url, topics,
         members_count,
         posts(*)
-      `) // Changed projects(*) to posts(*)
+      `)
       .eq('id', communityId)
       .single();
 
     if (communityError) throw communityError;
 
-    // Optionally fetch members if needed, though members_count is often sufficient
-    // const { data: membersData, error: membersError } = await supabase
-    //   .from('user_communities')
-    //   .select('user_id') // Select only necessary fields
-    //   .eq('community_id', communityId);
-
-    // if (membersError) throw membersError;
-
-    // Return combined data
     return {
       ...communityData,
-      // members: membersData || [] // Uncomment if fetching full member list
     };
 
   } catch (error) {
-    // Log the specific error for better debugging
     console.error("Error fetching community details:", error);
-    // Re-throw the error or return null based on desired handling
-    // Returning null might lead to the "Community Not Found" page if not handled upstream
-    // Throwing might be better if you want to show a generic error boundary
-    throw error; // Throwing error to be caught by the caller (e.g., in the component)
+    throw error;
   }
 };
 
 
 export const joinCommunity = async (
   communityId: string,
-  communityName: string,
-  communityDescription: string,
+  communityName: string | object, // Can be JSON object/string
+  communityDescription: string | object | undefined, // Can be JSON object/string or undefined
   communityImage: string,
   communityMembers: number,
   userId: string,
-  isPremium: boolean,
-  topics: string[]
+  // isPremium: boolean, // Removed isPremium parameter
+  topics: string[] | undefined // Topics might be optional
 ) => {
   try {
     // 1. Check if the community exists, create if not
@@ -57,23 +44,27 @@ export const joinCommunity = async (
       .eq('id', communityId)
       .single();
 
-    if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116: Row not found
+    if (fetchError && fetchError.code !== 'PGRST116') {
       throw fetchError;
     }
 
-    let currentMembersCount = communityMembers; // Use passed count initially
+    let currentMembersCount = communityMembers;
 
     if (!existingCommunity) {
+      // Ensure we insert valid data types (convert potentially parsed JSON back to string if needed, or handle object)
+      const nameToInsert = typeof communityName === 'object' ? JSON.stringify(communityName) : communityName;
+      const descriptionToInsert = typeof communityDescription === 'object' ? JSON.stringify(communityDescription) : communityDescription;
+      
       const { data: newCommunity, error: createError } = await supabase
         .from('communities')
         .insert({
-          id: communityId, // Use provided ID if joining based on external source
-          name: communityName,
-          description: communityDescription,
+          id: communityId, 
+          name: nameToInsert,
+          description: descriptionToInsert,
           image_url: communityImage,
-          members_count: 1, // Start with 1 member
-          is_premium: isPremium,
-          topics: topics
+          members_count: 1,
+          // Removed is_premium field from insert
+          topics: topics || [] // Ensure topics is an array
         })
         .select('id, members_count')
         .single();
@@ -82,7 +73,6 @@ export const joinCommunity = async (
       existingCommunity = newCommunity;
       currentMembersCount = 1;
     } else {
-      // Use the actual count from the database if the community existed
       currentMembersCount = existingCommunity.members_count || 0;
     }
 
@@ -92,13 +82,13 @@ export const joinCommunity = async (
       .select('user_id')
       .eq('user_id', userId)
       .eq('community_id', communityId)
-      .maybeSingle(); // Use maybeSingle to handle 0 or 1 result without error
+      .maybeSingle(); 
 
     if (membershipError) throw membershipError;
 
     if (existingMembership) {
       console.log("User is already a member of this community.");
-      return true; // Indicate success (already a member)
+      return true; 
     }
 
     // 3. Add the user to the community
@@ -108,8 +98,7 @@ export const joinCommunity = async (
 
     if (joinError) throw joinError;
 
-    // 4. Increment the members count (optional but good practice)
-    // We fetch the count again or use the optimistic count before incrementing
+    // 4. Increment the members count
     const { error: updateCountError } = await supabase
       .from('communities')
       .update({ members_count: currentMembersCount + 1 })
@@ -117,7 +106,6 @@ export const joinCommunity = async (
 
     if (updateCountError) {
       console.warn("Failed to update member count:", updateCountError);
-      // Don't throw an error here, joining was successful, count update is secondary
     }
 
     console.log(`User ${userId} successfully joined community ${communityId}`);
@@ -125,31 +113,32 @@ export const joinCommunity = async (
 
   } catch (error) {
     console.error("Error joining community:", error);
-    return false;
+    // Consider re-throwing or returning a more specific error object
+    return false; // Keep returning false on failure for now
   }
 };
 
 
-// Fetch all communities (you might want pagination here later)
+// Fetch all communities (modified to select only needed fields)
 export const fetchAllCommunities = async () => {
   try {
     const { data, error } = await supabase
       .from('communities')
-      .select('*'); // Select all columns, adjust as needed
+      .select('id, name, description, short_description, members_count, image_url, topics, order') // Select necessary fields
+      .order('order', { ascending: true }); 
 
     if (error) {
       throw error;
     }
     return data || [];
   } catch (error) {
-    console.error("Error fetching communities:", error);
+    console.error("Error fetching all communities:", error);
     return [];
   }
 };
 
 export const leaveCommunity = async (communityId: string, userId: string) => {
   try {
-    // 1. Remove the user from the community
     const { error: leaveError, count } = await supabase
       .from('user_communities')
       .delete({ count: 'exact' })
@@ -158,7 +147,6 @@ export const leaveCommunity = async (communityId: string, userId: string) => {
 
     if (leaveError) throw leaveError;
 
-    // 2. Decrement the members count only if a row was actually deleted
     if (count && count > 0) {
         const { data: communityData, error: fetchError } = await supabase
             .from('communities')
@@ -168,7 +156,6 @@ export const leaveCommunity = async (communityId: string, userId: string) => {
 
         if (fetchError) {
             console.warn("Failed to fetch member count before decrementing:", fetchError);
-            // Proceed without decrementing if fetch fails, but log it
         } else if (communityData) {
             const currentCount = communityData.members_count || 0;
             const { error: updateCountError } = await supabase
@@ -178,7 +165,6 @@ export const leaveCommunity = async (communityId: string, userId: string) => {
 
             if (updateCountError) {
                 console.warn("Failed to update member count after leaving:", updateCountError);
-                // Don't throw, leaving was successful
             }
         }
     }
@@ -191,10 +177,8 @@ export const leaveCommunity = async (communityId: string, userId: string) => {
   }
 };
 
-// Function to check if a user is a member of a community
 export const checkUserMembership = async (communityId: string, userId: string): Promise<boolean> => {
   try {
-    // Check if user and community IDs are valid before querying
     if (!userId || !communityId) {
         console.warn('User ID or Community ID is missing for membership check.');
         return false;
@@ -202,24 +186,19 @@ export const checkUserMembership = async (communityId: string, userId: string): 
 
     const { error, count } = await supabase
       .from('user_communities')
-      .select('*', { count: 'exact', head: true }) // Only count, don't fetch data
+      .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
       .eq('community_id', communityId);
 
     if (error) {
-      // Handle specific errors if needed, e.g., network issues
       console.error('Error checking user membership:', error);
-      // Decide how to handle errors: re-throw, return false, etc.
-      // Returning false might be safer for UI logic depending on the context.
       return false;
     }
 
-    // If count is null or undefined, treat as 0
-    return (count ?? 0) > 0; // Return true if a record exists (count > 0)
+    return (count ?? 0) > 0; 
 
   } catch (error) {
-    // Catch any unexpected errors during the process
     console.error('Unexpected error in checkUserMembership:', error);
-    return false; // Return false on unexpected errors
+    return false; 
   }
 };

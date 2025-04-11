@@ -1,77 +1,86 @@
 import React from 'react';
 import { GlareCard } from "@/components/ui/glare-card";
 import { SparklesCore } from "@/components/ui/sparkles";
-import { supabase } from '@/integrations/supabase/client';
+import { useTranslation } from 'react-i18next';
+import { getTranslatedField } from '@/utils/getTranslatedField';
 
-interface MissionItem {
-  title: string;
-  description: string;
+interface MissionItemData {
+  title: string | object;
+  description: string | object;
+  image_url?: string;
   img_background?: string;
-  order: number;
 }
 
-const Mission = () => {
-  const [missions, setMissions] = React.useState<MissionItem[]>([]);
+interface MissionProps {
+  missionData: MissionItemData[];
+  isLoading: boolean;
+}
 
-  React.useEffect(() => {
-    const fetchMissions = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('mission')
-          .select('title, description, order')
-          .order('order', { ascending: true });
-    
-        if (error) throw error;
-    
-        if (data) {
-          const missionsWithDefaults = data.map(mission => ({
-            title: mission.title || '',
-            description: mission.description || '',
-            image_url: '',
-            order: mission.order || 0,
-            img_background: ''
-          }));
-          setMissions(missionsWithDefaults);
-        }
-      } catch (error) {
-        console.error('Error fetching missions:', error);
-      }
-    };
+const Mission: React.FC<MissionProps> = ({ missionData, isLoading }) => {
+  const { t } = useTranslation();
 
-    fetchMissions();
-  }, []);
+  const defaultBackgrounds = [
+    "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//Govinda_Maharaj.jpg",
+    "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//Saraswati_Thakur.jpg",
+    "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//Sridhar_Maharaj.jpg"
+  ];
+
+  if (isLoading) {
+      return (
+        <section className="py-20 bg-gradient-to-br from-blue-950 to-blue-900/90 relative overflow-hidden">
+           <div className="container mx-auto px-4 text-center text-white/80">
+               {t('mission.loading', 'Loading mission...')}
+           </div>
+        </section>
+      );
+  }
+
+  if (!missionData || missionData.length === 0) {
+    return (
+       <section className="py-20 bg-gradient-to-br from-blue-950 to-blue-900/90 relative overflow-hidden">
+           <div className="container mx-auto px-4 text-center text-white/80">
+               {t('mission.noData', 'Mission data is currently unavailable.')}
+           </div>
+        </section>
+    );
+  }
 
   return (
-    <section className="py-12 bg-gradient-to-br from-blue-950 to-blue-900/90 relative overflow-hidden">
+    <section id="mission" className="py-20 bg-gradient-to-br from-blue-950 to-blue-900/90 relative overflow-hidden">
       <div className="absolute inset-0 w-full h-full">
         <SparklesCore
           background="transparent"
           minSize={0.4}
           maxSize={1}
-          particleDensity={100}
+          particleDensity={80}
           className="w-full h-full"
           particleColor="#FFFFFF"
         />
       </div>
       <div className="container mx-auto px-4 relative z-10">
-        <h2 className="text-3xl font-semibold text-center text-white mb-8">Наша миссия</h2>
-        <div className="flex flex-col md:flex-row justify-center items-center md:items-stretch gap-16 w-full max-w-5xl mx-auto px-4">
-          {missions.map((mission, index) => {
-            const backgrounds = [
-              "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//Govinda_Maharaj.jpg",
-              "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//Saraswati_Thakur.jpg",
-              "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//Sridhar_Maharaj.jpg"
-            ];
+        <h2 className="text-3xl md:text-4xl font-display font-bold text-center text-white mb-16">
+          {t('mission.sectionTitle', 'Our Mission')}
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 w-full max-w-6xl mx-auto">
+          {missionData.map((mission, index) => {
+            const title = getTranslatedField(mission.title, `mission-title-${index}`);
+            const description = getTranslatedField(mission.description, `mission-desc-${index}`);
+            const backgroundUrl = mission.img_background || defaultBackgrounds[index % defaultBackgrounds.length] || null;
+
             return (
-              <GlareCard key={index} className="flex flex-col items-center justify-center p-6 relative overflow-hidden">
-                <div 
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${backgrounds[index]})` }}
-                />
-                <div className="absolute inset-0 bg-black/50 backdrop-blur-xs" />
-                <div className="relative z-10 flex flex-col items-center justify-end h-full pb-8">
-                  <h3 className="text-xl font-medium text-white mb-2 text-center">{mission.title}</h3>
-                  <p className="text-gray-300 text-center px-4">{mission.description}</p>
+              <GlareCard key={index} className="flex flex-col relative overflow-hidden rounded-xl aspect-[3/4]">
+                {backgroundUrl && (
+                   <div 
+                    className="absolute inset-0 bg-cover bg-center transition-opacity duration-300 group-hover:opacity-70 opacity-50"
+                    style={{ backgroundImage: `url(${backgroundUrl})` }}
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
+                
+                {/* Changed p-6 to px-6 pt-6 pb-10 */}
+                <div className="relative z-10 flex flex-col justify-end flex-grow px-6 pt-6 pb-10 text-center"> 
+                  <h3 className="text-xl font-semibold text-white mb-3">{title}</h3>
+                  <p className="text-gray-200 text-sm leading-relaxed">{description}</p>
                 </div>
               </GlareCard>
             );

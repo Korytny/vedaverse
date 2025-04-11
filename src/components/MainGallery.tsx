@@ -1,76 +1,77 @@
 "use client"
 import InteractiveBentoGallery from '@/components/ui/gallery'
 
+// Updated mediaItems with new span values for a 3-column layout on md screens
 const mediaItems = [
-  {
+  { // 1. Govardhan (Left, tall)
     id: 1,
     type: "image",
-    title: "Beautiful Landscape",
-    desc: "Stunning natural scenery",
+    title: "Govardhan",
+    desc: "Parikrama path around the holy hill",
     url: "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//govard.jpg",
-    span: "md:col-span-1 md:row-span-3 sm:col-span-1 sm:row-span-3",
+    // md: 1 column, 2 rows. sm: 1 column, 2 rows
+    span: "md:col-span-1 md:row-span-2 sm:col-span-1 sm:row-span-2", 
   },
-  {
+  { // 2. Video (Center, wide)
     id: 2,
     type: "video",
-    title: "Ocean Waves",
-    desc: "Peaceful ocean view",
+    title: "Welcome to Vedaverse",
+    desc: "Discover the digital world of Vedic knowledge",
     url: "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//welcome.mp4",
-    span: "md:col-span-2 md:row-span-2 col-span-1 sm:col-span-2 sm:row-span-2",
+    // md: 2 columns, 2 rows. sm: All 3 columns, 2 rows
+    span: "md:col-span-2 md:row-span-2 sm:col-span-3 sm:row-span-2", 
   },
-  {
+  { // 3. Vrindavan (Right, tall) - Reduced row span
     id: 3,
     type: "image",
-    title: "Mountain View",
-    desc: "Majestic mountain range",
-    url: "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//64.jpg",
-    span: "md:col-span-1 md:row-span-3 sm:col-span-2 sm:row-span-3",
+    title: "Vrindavan Temples",
+    desc: "Sacred temples in the land of Krishna",
+    url: "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//Vrindavan.jpg",
+    // md: 1 column, 2 rows. sm: 1 column, 2 rows
+    span: "md:col-span-1 md:row-span-2 sm:col-span-1 sm:row-span-2", 
   },
-  {
+  { // 4. 64 Samadhis (Bottom Left)
     id: 4,
     type: "image",
-    title: "City Skyline",
-    desc: "Urban landscape at night",
-    url: "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//Vrindavan.jpg",
-    span: "md:col-span-2 md:row-span-2 sm:col-span-1 sm:row-span-2",
+    title: "64 Samadhis",
+    desc: "Sacred tombs of Vaishnava saints",
+    url: "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//64.jpg",
+    // md: 1 column, 1 row. sm: 1 column, 1 row
+    span: "md:col-span-1 md:row-span-1 sm:col-span-1 sm:row-span-1", 
   },
-  {
+  { // 5. Main (Bottom Center)
     id: 5,
     type: "image",
-    title: "Left Square",
-    desc: "Additional left content",
-    url: "/images/main.jpg",
-    span: "md:col-span-1 md:row-span-3 sm:col-span-1 sm:row-span-3",
+    title: "Spiritual Practice",
+    desc: "Engaging in devotional activities",
+    url: "/images/main.jpg", // Using local image
+    // md: 1 column, 1 row. sm: 1 column, 1 row
+    span: "md:col-span-1 md:row-span-1 sm:col-span-1 sm:row-span-1", 
   },
-  {
+  { // 6. 49 Kunj (Bottom Right)
     id: 6,
     type: "image",
-    title: "Right Square",
-    desc: "Additional right content",
+    title: "Sacred Groves",
+    desc: "Places of Krishna's pastimes",
     url: "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//49.jpg",
-    span: "md:col-span-1 md:row-span-3 sm:col-span-1 sm:row-span-3",
+    // md: 1 column, 1 row. sm: 1 column, 1 row
+    span: "md:col-span-1 md:row-span-1 sm:col-span-1 sm:row-span-1", 
   },
-  {
-    id: 7,
-    type: "image",
-    title: "Wide Bottom",
-    desc: "Additional main content",
-    url: "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//4903.jpg",
-    span: "md:col-span-2 md:row-span-2 sm:col-span-2 sm:row-span-3",
-  },
-]
+  // Removed item 7 as we have 6 items fitting a 3x2 grid on md
+];
 
 const MainGallery = () => {
+  // TODO: Add translation for title and description
   return (
-    <section className="py-12 bg-white">
+    <section className="py-16 md:py-24 bg-background"> {/* Adjusted padding */} 
       <div className="container mx-auto px-4">
-        <div className="min-h-screen overflow-y-auto">
-          <InteractiveBentoGallery
-            mediaItems={mediaItems}
-            title="Our Gallery"
-            description="Explore our collection of images and videos"
-          />
-        </div>
+        {/* Removed min-h-screen and overflow-y-auto from here */}
+        <InteractiveBentoGallery
+          mediaItems={mediaItems}
+          // These should be translated
+          title="Gallery of Inspiration"
+          description="Visual glimpses into the Vedic world and spiritual life"
+        />
       </div>
     </section>
   )

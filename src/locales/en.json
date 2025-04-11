@@ -1,0 +1,51 @@
+{
+  "navbar": {
+    "home": "Home",
+    "communities": "Communities",
+    "pricing": "Pricing",
+    "login": "Login",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "footer": {
+    "about": "About Us",
+    "contact": "Contact",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy"
+  },
+  "buttons": {
+    "joinCommunity": "Join Community",
+    "leaveCommunity": "Leave Community",
+    "checking": "Checking...",
+    "signInToJoin": "Sign in to Join",
+    "signInToPost": "Sign in to Post",
+    "joinToPost": "Join Community to Post",
+    "backToCommunities": "Back to Communities",
+    "editCommunity": "Edit Community"
+  },
+  "communityDetails": {
+    "premiumCommunity": "Premium Community",
+    "freeCommunity": "Free Community",
+    "communityStats": "Community Stats",
+    "members": "Members",
+    "posts": "Posts",
+    "created": "Created",
+    "topicsCovered": "Topics Covered",
+    "noTopics": "No topics specified",
+    "aboutCommunity": "About this Community",
+    "communityPosts": "Community Posts",
+    "loadingPosts": "Loading posts...",
+    "noPostsYet": "No posts yet",
+    "firstToShare": "Be the first to share something with the community!",
+    "communityRules": "Community Rules",
+    "loadingDetails": "Loading community details...",
+    "communityNotFound": "Community Not Found",
+    "notFoundMessage": "The community you're looking for doesn't exist or could not be loaded.",
+    "backToHome": "Back to Home"
+  },
+  "forms": {
+    "createPostPlaceholder": "What's on your mind?",
+    "createPostButton": "Create Post"
+  }
+}
