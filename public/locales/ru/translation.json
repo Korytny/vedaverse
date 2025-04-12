@@ -22,7 +22,8 @@
       "signInToPost": "Войдите, чтобы опубликовать",
       "joinToPost": "Присоединитесь, чтобы опубликовать",
       "backToCommunities": "Назад к Сообществам",
-      "backToHome": "На Главную"
+      "backToHome": "На Главную",
+      "learnMore": "Узнать больше"
   },
    "community": {
       "loading": "Загрузка данных сообщества...",

@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +13,7 @@ import ProjectDetails from "./pages/ProjectDetails";
 import AdminEditProject from "./pages/AdminEditProject";
 import AuthCallback from "./pages/AuthCallback";
 import Profile from "./pages/Profile";
+import { LanguageProvider } from "./context/LanguageContext";
 
 const queryClient = new QueryClient();
 
@@ -24,19 +24,21 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <AnimatePresence mode="wait">
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/communities" element={<Communities />} />
-              <Route path="/project/:id" element={<ProjectDetails />} />
-              <Route path="/admin/edit-project/:id" element={<AdminEditProject />} />
-              <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route path="/profile" element={<Profile />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </AnimatePresence>
+          <LanguageProvider>
+            <AnimatePresence mode="wait">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/communities" element={<Communities />} />
+                <Route path="/project/:id" element={<ProjectDetails />} />
+                <Route path="/admin/edit-project/:id" element={<AdminEditProject />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/profile" element={<Profile />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </AnimatePresence>
+          </LanguageProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

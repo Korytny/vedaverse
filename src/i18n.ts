@@ -24,7 +24,7 @@ i18n
     },
     backend: {
       // Path where resources get loaded from, we'll place files in public/locales
-      loadPath: '/locales/{{lng}}/{{ns}}.json',
+      loadPath: '/locales/{{lng}}/translation.json',
     },
     // Default namespace (optional)
     ns: ['translation'],

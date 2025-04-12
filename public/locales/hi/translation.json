@@ -22,7 +22,8 @@
       "signInToPost": "पोस्ट करने के लिए साइन इन करें",
       "joinToPost": "पोस्ट करने के लिए समुदाय में शामिल हों",
       "backToCommunities": "समुदायों पर वापस",
-      "backToHome": "होम पर वापस"
+      "backToHome": "होम पर वापस",
+      "learnMore": "और जानें"
   },
   "community": {
       "loading": "समुदाय विवरण लोड हो रहा है...",

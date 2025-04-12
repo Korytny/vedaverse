@@ -8,8 +8,9 @@ import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { joinCommunity } from '@/utils/communityUtils';
-import { useTranslation } from 'react-i18next';
+// import { useTranslation } from 'react-i18next'; // REMOVE THIS LINE
 import { getTranslatedField } from '@/utils/getTranslatedField';
+import { useTranslation } from '@/hooks/useTranslation';
 
 type CommunityCardProps = {
   id: string;
@@ -19,7 +20,7 @@ type CommunityCardProps = {
   members_count: number;
   image_url: string;
   // price?: number; // Removed price prop
-  topics?: string[];
+  topics?: {en:string, hi:string, ru:string}[]
 };
 
 const CommunityCard = ({ 
@@ -78,7 +79,7 @@ const CommunityCard = ({
   };
 
   // Button is always for joining a free community now
-  const joinButtonText = t('communityCard.joinFree');
+  //const joinButtonText = t('communityCard.joinFree');
   const joinButtonVariant = "outline";
 
   return (
@@ -112,34 +113,44 @@ const CommunityCard = ({
         </CardHeader>
 
         <CardContent className="flex-grow pt-0 pb-3">
+          <>
           <p className="text-sm text-muted-foreground line-clamp-3">
             {displayDescription || t('community.noDescription')}
           </p>
           {topics && topics.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-2">
-              {topics.slice(0, 3).map((topic, index) => (
-                <Badge key={index} variant="outline" className="text-xs font-normal">
-                  {topic}
-                </Badge>
-              ))}
-              {topics.length > 3 && (
-                <Badge variant="ghost" className="text-xs font-normal">
-                  {t('communityCard.moreTopics', { count: topics.length - 3 })}
-                </Badge>
-              )}
+              {topics.map((topic, index) => {
+                  const translatedTopic = getTranslatedField(topic, `topic-${index}`);
+
+                  return (
+                    <Badge key={index} variant="outline" className="text-xs font-normal">
+                      {translatedTopic}
+                    </Badge>
+                  )
+                })}
             </div>
           )}
+          </>
         </CardContent>
 
-        <CardFooter className="pt-2 mt-auto">
+        <CardFooter className="pt-2 mt-auto flex gap-2">
           <Button
             onClick={handleJoin}
             className="w-full rounded-md text-sm"
             variant={joinButtonVariant} // Always "outline" now
             size="sm"
           >
-            {joinButtonText} {/* Always "Join for Free" text */}
+            {t('buttons.joinCommunity')}
           </Button>
+          <Link to={`/project/${id}`}>
+          <Button
+            className="w-full rounded-md text-sm"
+            variant={"ghost"} // Always "outline" now
+            size="sm"
+          >
+            {t('buttons.learnMore')}
+          </Button>
+          </Link>
         </CardFooter>
       </Card>
     </motion.div>

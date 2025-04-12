@@ -15,6 +15,8 @@ import CreatePostForm from '@/components/CreatePostForm';
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 import { getTranslatedField } from '@/utils/getTranslatedField'; // Import the utility
 
+type Topic = { en: string; hi: string; ru: string };
+
 const ProjectDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [community, setCommunity] = useState<any>(null);
@@ -216,6 +218,9 @@ const ProjectDetails = () => {
   const communityShortDescription = getTranslatedField(community.short_description, '');
   const communityLongDescription = getTranslatedField(community.description, t('community.noDescription'));
 
+  // Log the HTML content to verify
+  console.log("Community Description HTML:", communityLongDescription);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -307,12 +312,14 @@ const ProjectDetails = () => {
                 <div className="border-t border-border pt-4">
                   <h3 className="text-sm font-semibold mb-3 uppercase text-muted-foreground">{t('community.topics')}</h3>
                   <div className="flex flex-wrap gap-2">
-                    {(community.topics || []).map((topic: string, index: number) => (
-                      // Assuming topics are simple strings and don't need translation themselves
-                      <span key={index} className="px-2 py-0.5 bg-secondary text-secondary-foreground rounded text-xs font-medium">
-                        {topic}
-                      </span>
-                    ))}
+                    {(community.topics || []).map((topic: any, index: number) => {
+                      const translatedTopic = getTranslatedField(topic, `topic-${index}`);
+                      return (
+                        <span key={index} className="px-2 py-0.5 bg-secondary text-secondary-foreground rounded text-xs font-medium">
+                          {translatedTopic}
+                        </span>
+                      );
+                    })}
                     {(!community.topics || community.topics.length === 0) && (
                       <span className="text-muted-foreground text-sm">{t('community.noTopics')}</span>
                     )}
@@ -327,7 +334,8 @@ const ProjectDetails = () => {
                 <div className="md:col-span-2 space-y-8">
                   <div>
                     <h2 className="text-2xl font-bold mb-4">{t('community.about')}</h2>
-                    <p className="text-muted-foreground whitespace-pre-line leading-relaxed">{communityLongDescription}</p>
+                    {/* Apply prose class here */}
+                    <div className="prose max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: communityLongDescription }} />
                   </div>
                   <div className="border-t pt-8">
                     <h2 className="text-2xl font-bold mb-4">{t('community.communityPosts')}</h2>

@@ -1,49 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useLanguage, Language } from '@/context/LanguageContext';
-
-// Import translations from the public directory
-import en from '../../public/locales/en/translation.json';
-import hi from '../../public/locales/hi/translation.json';
-import ru from '../../public/locales/ru/translation.json';
+import i18n from '../i18n';
 
 // Define a type for the translations
-// You can generate this automatically later for better type safety
-type Translations = typeof en;
-
-const translations: Record<Language, Translations> = {
-    en,
-    hi,
-    ru,
-};
-
 // Hook to get the translation function
 export const useTranslation = () => {
-    const { language } = useLanguage();
-    const [t, setT] = useState<Translations>(translations[language]);
+  const { language } = useLanguage();
+  const [t, setT] = useState<any>({});
 
-    useEffect(() => {
-        // Update translations when language changes
-        setT(translations[language]);
-    }, [language]);
+  useEffect(() => {
+    console.log('useTranslation: language changed to', language);
+  }, [language]);
 
-    // Function to get nested keys like 'navbar.home'
-    const translate = (key: string): string => {
-        const keys = key.split('.');
-        let result: any = t;
-        try {
-            for (const k of keys) {
-                result = result[k];
-                if (result === undefined) {
-                    console.warn(`Translation key "${key}" not found for language "${language}"`);
-                    return key; // Return the key itself as fallback
-                }
-            }
-            return typeof result === 'string' ? result : key; // Ensure it's a string
-        } catch (error) {
-            console.warn(`Error accessing translation key "${key}" for language "${language}":`, error);
-            return key; // Return the key on error
-        }
-    };
+  // Function to get nested keys like 'navbar.home'
+  const translate = (key: string, options?: any): string => {
+    console.log('useTranslation: translating key', key, 'with options', options);
+    const translated = i18n.t(key, options);
+    console.log('useTranslation: translated key', key, 'to', translated);
+    return translated;
+  };
 
-    return { t: translate, language }; // Return the translation function and current language
+  return { t: translate, language }; // Return the translation function and current language
 };

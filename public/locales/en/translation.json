@@ -22,7 +22,8 @@
       "signInToPost": "Sign in to Post",
       "joinToPost": "Join Community to Post",
       "backToCommunities": "Back to Communities",
-      "backToHome": "Back to Home"
+      "backToHome": "Back to Home",
+      "learnMore": "Learn More"
   },
   "community": {
       "loading": "Loading community details...",
