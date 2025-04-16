@@ -5,10 +5,13 @@ import UserHeader from '@/components/dashboard/UserHeader';
 import UserCommunities from '@/components/dashboard/UserCommunities';
 import RecommendedCommunities from '@/components/dashboard/RecommendedCommunities';
 import UserActivities from '@/components/dashboard/UserActivities';
-import UserAccount from '@/components/dashboard/UserAccount';
+// import UserAccount from '@/components/dashboard/UserAccount'; // Remove import
+import AccountSettings from '@/components/dashboard/AccountSettings'; // Import the new component
 import { useDashboardData } from '@/hooks/useDashboardData';
+import { useTranslation } from 'react-i18next'; 
 
 const Dashboard = () => {
+  const { t } = useTranslation(); 
   const {
     user,
     isLoading,
@@ -20,7 +23,6 @@ const Dashboard = () => {
     handleJoinCommunity
   } = useDashboardData();
 
-  // If auth is still loading or we're fetching data, show loading state
   if (isLoading || loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -31,15 +33,16 @@ const Dashboard = () => {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
           </div>
-          <h1 className="text-2xl font-bold">Loading Dashboard...</h1>
-          <p className="mt-2 text-muted-foreground">Please wait while we fetch your data.</p>
+          <h1 className="text-2xl font-bold">{t('dashboard.loading')}</h1> 
+          <p className="mt-2 text-muted-foreground">{t('dashboard.loadingDesc')}</p>
         </div>
       </div>
     );
   }
 
-  // If not logged in after checking, redirect handled in useDashboardData
-  if (!user) {
+  if (!user || !userData) { // Added check for userData as well
+    // Potentially show a message or redirect, although useDashboardData might handle it
+    console.warn("Dashboard: User or userData not available.")
     return null;
   }
 
@@ -53,9 +56,9 @@ const Dashboard = () => {
       
       <Tabs defaultValue="communities" className="w-full">
         <TabsList className="mb-6">
-          <TabsTrigger value="communities">My Communities</TabsTrigger>
-          <TabsTrigger value="activity">Recent Activity</TabsTrigger>
-          <TabsTrigger value="settings">Account</TabsTrigger>
+          <TabsTrigger value="communities">{t('dashboard.tabs.myCommunities')}</TabsTrigger>
+          <TabsTrigger value="activity">{t('dashboard.tabs.recentActivity')}</TabsTrigger>
+          <TabsTrigger value="settings">{t('dashboard.tabs.account')}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="communities">
@@ -73,11 +76,14 @@ const Dashboard = () => {
         </TabsContent>
         
         <TabsContent value="settings">
-          <UserAccount 
+          {/* Replace UserAccount with AccountSettings */}
+          <AccountSettings /> 
+          {/* Removed props as AccountSettings fetches its own data using useAuth */}
+          {/* <UserAccount 
             name={userData.name}
             email={userData.email}
             avatar={userData.avatar}
-          />
+          /> */}
         </TabsContent>
       </Tabs>
     </DashboardLayout>

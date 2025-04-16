@@ -1,43 +1,73 @@
 import { supabase } from '@/integrations/supabase/client';
 
+// Updated type for member data returned by RPC
+interface CommunityMemberWithAvatar {
+  user_id: string;
+  avatar_url: string | null; // RPC function returns text, so string | null
+}
+
 export const fetchCommunityDetails = async (communityId: string) => {
   try {
+    // --- First Query: Fetch main community details --- 
     const { data: communityData, error: communityError } = await supabase
       .from('communities')
-      // Select needed fields, excluding non-existent ones
       .select(`
-        id, name, description, short_description, members_count, image_url, topics,
-        members_count,
-        posts(*)
+        id, name, description, short_description, members_count, image_url, topics, created_at
       `)
       .eq('id', communityId)
       .single();
 
-    if (communityError) throw communityError;
+    if (communityError) {
+      console.error("Error fetching community main data:", communityError);
+      throw communityError;
+    }
 
+    if (!communityData) {
+      return null; // Community not found
+    }
+
+    // --- Second Query: Call RPC function to get members with avatars --- 
+    let membersWithAvatars: CommunityMemberWithAvatar[] = [];
+    try {
+      const { data: memberData, error: rpcError } = await supabase.rpc('get_community_members_with_avatars', {
+        p_community_id: communityId 
+      });
+        
+      // *** ADD CONSOLE LOG HERE ***
+      console.log(`[RPC Result for ${communityId}]:`, memberData);
+
+      if (rpcError) {
+         console.error("Error calling RPC function get_community_members_with_avatars:", rpcError);
+      } else {
+        membersWithAvatars = (memberData || []) as CommunityMemberWithAvatar[];
+      }
+    } catch(err) {
+         console.error("Caught error calling RPC:", err);
+    }
+
+    // Return combined data
     return {
       ...communityData,
+      members: membersWithAvatars, 
     };
 
   } catch (error) {
-    console.error("Error fetching community details:", error);
+    console.error("Error in fetchCommunityDetails process:", error);
     throw error;
   }
 };
 
-
+// joinCommunity remains the same
 export const joinCommunity = async (
   communityId: string,
-  communityName: string | object, // Can be JSON object/string
-  communityDescription: string | object | undefined, // Can be JSON object/string or undefined
+  communityName: string | object, 
+  communityDescription: string | object | undefined, 
   communityImage: string,
   communityMembers: number,
   userId: string,
-  // isPremium: boolean, // Removed isPremium parameter
-  topics: string[] | undefined // Topics might be optional
+  topics: string[] | undefined 
 ) => {
   try {
-    // 1. Check if the community exists, create if not
     let { data: existingCommunity, error: fetchError } = await supabase
       .from('communities')
       .select('id, members_count')
@@ -51,7 +81,6 @@ export const joinCommunity = async (
     let currentMembersCount = communityMembers;
 
     if (!existingCommunity) {
-      // Ensure we insert valid data types (convert potentially parsed JSON back to string if needed, or handle object)
       const nameToInsert = typeof communityName === 'object' ? JSON.stringify(communityName) : communityName;
       const descriptionToInsert = typeof communityDescription === 'object' ? JSON.stringify(communityDescription) : communityDescription;
       
@@ -63,8 +92,7 @@ export const joinCommunity = async (
           description: descriptionToInsert,
           image_url: communityImage,
           members_count: 1,
-          // Removed is_premium field from insert
-          topics: topics || [] // Ensure topics is an array
+          topics: topics || []
         })
         .select('id, members_count')
         .single();
@@ -76,7 +104,6 @@ export const joinCommunity = async (
       currentMembersCount = existingCommunity.members_count || 0;
     }
 
-    // 2. Check if the user is already a member
     const { data: existingMembership, error: membershipError } = await supabase
       .from('user_communities')
       .select('user_id')
@@ -91,14 +118,12 @@ export const joinCommunity = async (
       return true; 
     }
 
-    // 3. Add the user to the community
     const { error: joinError } = await supabase
       .from('user_communities')
       .insert({ user_id: userId, community_id: communityId });
 
     if (joinError) throw joinError;
 
-    // 4. Increment the members count
     const { error: updateCountError } = await supabase
       .from('communities')
       .update({ members_count: currentMembersCount + 1 })
@@ -113,18 +138,16 @@ export const joinCommunity = async (
 
   } catch (error) {
     console.error("Error joining community:", error);
-    // Consider re-throwing or returning a more specific error object
-    return false; // Keep returning false on failure for now
+    return false;
   }
 };
 
-
-// Fetch all communities (modified to select only needed fields)
+// fetchAllCommunities remains the same
 export const fetchAllCommunities = async () => {
   try {
     const { data, error } = await supabase
       .from('communities')
-      .select('id, name, description, short_description, members_count, image_url, topics, order') // Select necessary fields
+      .select('id, name, description, short_description, members_count, image_url, topics, order')
       .order('order', { ascending: true }); 
 
     if (error) {
@@ -137,6 +160,7 @@ export const fetchAllCommunities = async () => {
   }
 };
 
+// leaveCommunity remains the same
 export const leaveCommunity = async (communityId: string, userId: string) => {
   try {
     const { error: leaveError, count } = await supabase
@@ -177,6 +201,7 @@ export const leaveCommunity = async (communityId: string, userId: string) => {
   }
 };
 
+// checkUserMembership remains the same
 export const checkUserMembership = async (communityId: string, userId: string): Promise<boolean> => {
   try {
     if (!userId || !communityId) {

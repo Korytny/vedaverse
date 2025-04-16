@@ -6,61 +6,61 @@
     "pricing": "Pricing",
     "login": "Login",
     "logout": "Logout",
-    "dashboard": "Dashboard",
-    "profileSettings": "Profile Settings"
+    "dashboard": "Dashboard"
   },
-   "hero": {
+  "hero": {
     "title": "Digital universe of Vedic projects",
     "subtitle": "Explore communities, knowledge and tools for spiritual growth.",
     "ctaButton": "Explore Communities"
   },
   "buttons": {
-      "joinCommunity": "Join Community",
-      "leaveCommunity": "Leave Community",
-      "editCommunity": "Edit Community",
-      "signInToJoin": "Sign in to Join",
-      "signInToPost": "Sign in to Post",
-      "joinToPost": "Join Community to Post",
-      "backToCommunities": "Back to Communities",
-      "backToHome": "Back to Home",
-      "learnMore": "Learn More"
+    "joinCommunity": "Join Community",
+    "leaveCommunity": "Leave Community",
+    "editCommunity": "Edit Community",
+    "signInToJoin": "Sign in to Join",
+    "signInToPost": "Sign in to Post",
+    "joinToPost": "Join Community to Post",
+    "backToCommunities": "Back to Communities",
+    "backToHome": "Back to Home",
+    "learnMore": "Learn More"
   },
   "community": {
-      "loading": "Loading community details...",
-      "loadError": "Failed to load community details",
-      "loadPostsError": "Failed to load community posts", 
-      "signInToJoinInfo": "Please sign in to join communities.",
-      "notFound": "Community Not Found",
-      "notFoundDesc": "The community you're looking for doesn't exist or could not be loaded.",
-      "premium": "Premium Community",
-      "free": "Free Community",
-      "stats": "Community Stats",
-      "members": "{{count}} Members",
-      "posts": "{{count}} Posts",
-      "created": "Created {{date}}",
-      "topics": "Topics Covered",
-      "noTopics": "No topics specified",
-      "about": "About this Community",
-      "noDescription": "No description provided.",
-      "communityPosts": "Community Posts",
-      "loadingPosts": "Loading posts...",
-      "noPosts": "No posts yet",
-      "firstPost": "Be the first to share something with the community!",
-      "rules": "Community Rules",
-      "checkingMembership": "Checking...",
-      "joinSuccess": "Successfully joined {{name}}!",
-      "leaveSuccess": "You have left {{name}}.",
-      "joinError": "Failed to join community.",
-      "leaveError": "Failed to leave community.",
-      "membershipError": "Could not verify membership status.",
-      "defaultTitle": "Community" 
+    "loading": "Loading community details...",
+    "loadError": "Failed to load community details",
+    "loadPostsError": "Failed to load community posts",
+    "signInToJoinInfo": "Please sign in to join communities.",
+    "notFound": "Community Not Found",
+    "notFoundDesc": "The community you're looking for doesn't exist or could not be loaded.",
+    "premium": "Premium Community",
+    "free": "Free Community",
+    "stats": "Community Stats",
+    "members": "{{count}} Members",
+    "posts": "{{count}} Posts",
+    "created": "Created {{date}}",
+    "topics": "Topics Covered",
+    "noTopics": "No topics specified",
+    "about": "About this Community",
+    "noDescription": "No description provided.",
+    "communityPosts": "Community Posts",
+    "loadingPosts": "Loading posts...",
+    "noPosts": "No posts yet",
+    "firstPost": "Be the first to share something with the community!",
+    "rules": "Community Rules",
+    "checkingMembership": "Checking...",
+    "joinSuccess": "Successfully joined {{name}}!",
+    "leaveSuccess": "You have left {{name}}.",
+    "joinError": "Failed to join community.",
+    "leaveError": "Failed to leave community.",
+    "membershipError": "Could not verify membership status.",
+    "defaultTitle": "Community",
+    "loadAvatarsError": "Could not load some member avatars"
   },
   "communityCard": {
-      "premium": "Premium",
-      "members": "{{count}} members",
-      "moreTopics": "+{{count}} more",
-      "joinFree": "Join for Free",
-      "joinPremium": "Join for ${{price}}/mo"
+    "premium": "Premium",
+    "members": "{{count}} members",
+    "moreTopics": "+{{count}} more",
+    "joinFree": "Join for Free",
+    "joinPremium": "Join for ${{price}}/mo"
   },
   "index": {
     "loadMissionError": "Failed to load mission data.",
@@ -77,5 +77,53 @@
     "sectionTitle": "Our Mission",
     "loading": "Loading mission...",
     "noData": "Mission data is currently unavailable."
+  },
+  "dashboard": {
+    "userCommunities": {
+      "title": "Your Communities",
+      "description": "Communities you're currently a member of",
+      "joinNew": "Join New",
+      "unreadMessages": "new",
+      "enter": "Enter",
+      "emptyTitle": "No communities yet",
+      "emptyDescription": "You haven't joined any communities yet",
+      "emptyButton": "Browse Communities"
+    },
+    "recommendedCommunities": {
+      "title": "Recommended For You",
+      "description": "Based on your interests and activities",
+      "connectMembers": "Connect with {{count}} members",
+      "viewCommunity": "View Community"
+    },
+    "header": {
+      "welcome": "Welcome, {{name}}"
+    },
+    "tabs": {
+      "myCommunities": "My Communities",
+      "recentActivity": "Recent Activity",
+      "account": "Account"
+    },
+    "loading": "Loading Dashboard...",
+    "loadingDesc": "Please wait while we fetch your data.",
+    "accountSettings": {
+      "toastLoadError": "Failed to load profile data",
+      "toastUpdateSuccess": "Profile updated successfully",
+      "toastUpdateError": "Failed to update profile",
+      "toastAvatarSuccess": "Avatar updated successfully",
+      "toastAvatarError": "Failed to update avatar",
+      "buttonSignOut": "Sign out",
+      "cardTitle": "Personal Information",
+      "cardDescription": "Update your personal details",
+      "labelFullName": "Full Name",
+      "placeholderFullName": "Your full name",
+      "labelEmail": "Email",
+      "descEmailUnchangeable": "Email cannot be changed",
+      "labelPhone": "Phone Number",
+      "placeholderPhone": "Your phone number",
+      "labelBio": "Bio",
+      "placeholderBio": "Tell us a bit about yourself",
+      "buttonSaving": "Saving...",
+      "buttonSaveChanges": "Save Changes"
+    }
   }
 }

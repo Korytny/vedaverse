@@ -12,7 +12,7 @@ import NotFound from "./pages/NotFound";
 import ProjectDetails from "./pages/ProjectDetails";
 import AdminEditProject from "./pages/AdminEditProject";
 import AuthCallback from "./pages/AuthCallback";
-import Profile from "./pages/Profile";
+// import Profile from "./pages/Profile"; // Remove import
 import { LanguageProvider } from "./context/LanguageContext";
 
 const queryClient = new QueryClient();
@@ -33,7 +33,7 @@ const App = () => (
                 <Route path="/project/:id" element={<ProjectDetails />} />
                 <Route path="/admin/edit-project/:id" element={<AdminEditProject />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
-                <Route path="/profile" element={<Profile />} />
+                {/* <Route path="/profile" element={<Profile />} /> */}{/* Remove route */}
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

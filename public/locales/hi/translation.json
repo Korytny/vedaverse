@@ -6,8 +6,7 @@
     "pricing": "मूल्य निर्धारण",
     "login": "लॉग इन करें",
     "logout": "लॉग आउट करें",
-    "dashboard": "डैशबोर्ड",
-    "profileSettings": "प्रोफ़ाइल सेटिंग्स"
+    "dashboard": "डैशबोर्ड"
   },
   "hero": {
     "title": "वैदिक परियोजनाओं का डिजिटल ब्रह्मांड",
@@ -15,52 +14,52 @@
     "ctaButton": "समुदायों का अन्वेषण करें"
   },
   "buttons": {
-      "joinCommunity": "समुदाय में शामिल हों",
-      "leaveCommunity": "समुदाय छोड़ें",
-      "editCommunity": "समुदाय संपादित करें",
-      "signInToJoin": "शामिल होने के लिए साइन इन करें",
-      "signInToPost": "पोस्ट करने के लिए साइन इन करें",
-      "joinToPost": "पोस्ट करने के लिए समुदाय में शामिल हों",
-      "backToCommunities": "समुदायों पर वापस",
-      "backToHome": "होम पर वापस",
-      "learnMore": "और जानें"
+    "joinCommunity": "समुदाय में शामिल हों",
+    "leaveCommunity": "समुदाय छोड़ें",
+    "editCommunity": "समुदाय संपादित करें",
+    "signInToJoin": "शामिल होने के लिए साइन इन करें",
+    "signInToPost": "पोस्ट करने के लिए साइन इन करें",
+    "joinToPost": "पोस्ट करने के लिए समुदाय में शामिल हों",
+    "backToCommunities": "समुदायों पर वापस",
+    "backToHome": "होम पर वापस",
+    "learnMore": "और जानें"
   },
   "community": {
-      "loading": "समुदाय विवरण लोड हो रहा है...",
-      "loadError": "समुदाय विवरण लोड करने में विफल",
-      "loadPostsError": "समुदाय पोस्ट लोड करने में विफल",
-      "signInToJoinInfo": "कृपया समुदायों में शामिल होने के लिए साइन इन करें।",
-      "notFound": "समुदाय नहीं मिला",
-      "notFoundDesc": "आप जिस समुदाय की तलाश कर रहे हैं वह मौजूद नहीं है या लोड नहीं किया जा सका।",
-      "premium": "प्रीमियम समुदाय",
-      "free": "निःशुल्क समुदाय",
-      "stats": "समुदाय आँकड़े",
-      "members": "{{count}} सदस्य",
-      "posts": "{{count}} पोस्ट",
-      "created": "{{date}} को बनाया गया",
-      "topics": "शामिल विषय",
-      "noTopics": "कोई विषय निर्दिष्ट नहीं है",
-      "about": "इस समुदाय के बारे में",
-      "noDescription": "कोई विवरण प्रदान नहीं किया गया।",
-      "communityPosts": "सामुदायिक पोस्ट",
-      "loadingPosts": "पोस्ट लोड हो रहे हैं...",
-      "noPosts": "अभी तक कोई पोस्ट नहीं है",
-      "firstPost": "समुदाय के साथ कुछ साझा करने वाले पहले व्यक्ति बनें!",
-      "rules": "समुदाय के नियम",
-      "checkingMembership": "जाँच हो रही है...",
-      "joinSuccess": "आप {{name}} में सफलतापूर्वक शामिल हो गए हैं!",
-      "leaveSuccess": "आपने {{name}} छोड़ दिया है।",
-      "joinError": "समुदाय में शामिल होने में विफल।",
-      "leaveError": "समुदाय छोड़ने में विफल।",
-      "membershipError": "सदस्यता स्थिति सत्यापित नहीं की जा सकी।",
-      "defaultTitle": "समुदाय"
+    "loading": "समुदाय विवरण लोड हो रहा है...",
+    "loadError": "समुदाय विवरण लोड करने में विफल",
+    "loadPostsError": "समुदाय पोस्ट लोड करने में विफल",
+    "signInToJoinInfo": "कृपया समुदायों में शामिल होने के लिए साइन इन करें।",
+    "notFound": "समुदाय नहीं मिला",
+    "notFoundDesc": "आप जिस समुदाय की तलाश कर रहे हैं वह मौजूद नहीं है या लोड नहीं किया जा सका।",
+    "premium": "प्रीमियम समुदाय",
+    "free": "निःशुल्क समुदाय",
+    "stats": "समुदाय आँकड़े",
+    "members": "{{count}} सदस्य",
+    "posts": "{{count}} पोस्ट",
+    "created": "{{date}} को बनाया गया",
+    "topics": "शामिल विषय",
+    "noTopics": "कोई विषय निर्दिष्ट नहीं है",
+    "about": "इस समुदाय के बारे में",
+    "noDescription": "कोई विवरण प्रदान नहीं किया गया।",
+    "communityPosts": "सामुदायिक पोस्ट",
+    "loadingPosts": "पोस्ट लोड हो रहे हैं...",
+    "noPosts": "अभी तक कोई पोस्ट नहीं है",
+    "firstPost": "समुदाय के साथ कुछ साझा करने वाले पहले व्यक्ति बनें!",
+    "rules": "समुदाय के नियम",
+    "checkingMembership": "जाँच हो रही है...",
+    "joinSuccess": "आप {{name}} में सफलतापूर्वक शामिल हो गए हैं!",
+    "leaveSuccess": "आपने {{name}} छोड़ दिया है।",
+    "joinError": "समुदाय में शामिल होने में विफल।",
+    "leaveError": "समुदाय छोड़ने में विफल।",
+    "membershipError": "सदस्यता स्थिति सत्यापित नहीं की जा सकी।",
+    "defaultTitle": "समुदाय"
   },
   "communityCard": {
-      "premium": "प्रीमियम",
-      "members": "{{count}} सदस्य",
-      "moreTopics": "+{{count}} और",
-      "joinFree": "निःशुल्क शामिल हों",
-      "joinPremium": "${{price}}/माह के लिए शामिल हों"
+    "premium": "प्रीमियम",
+    "members": "{{count}} सदस्य",
+    "moreTopics": "+{{count}} और",
+    "joinFree": "निःशुल्क शामिल हों",
+    "joinPremium": "${{price}}/माह के लिए शामिल हों"
   },
   "index": {
     "loadMissionError": "मिशन डेटा लोड करने में विफल।",
@@ -77,5 +76,54 @@
     "sectionTitle": "हमारा मिशन",
     "loading": "मिशन लोड हो रहा है...",
     "noData": "मिशन डेटा वर्तमान में अनुपलब्ध है।"
+  },
+  "dashboard": {
+    "userCommunities": {
+      "title": "आपकी समुदाय",
+      "description": "समुदाय जिनके आप वर्तमान में सदस्य हैं",
+      "joinNew": "नया शामिल हों",
+      "unreadMessages": "नये",
+      "enter": "प्रवेश करें",
+      "emptyTitle": "अभी तक कोई समुदाय नहीं",
+      "emptyDescription": "आप अभी तक किसी भी समुदाय में शामिल नहीं हुए हैं",
+      "emptyButton": "समुदाय ब्राउज़ करें"
+    },
+    "recommendedCommunities": {
+      "title": "आपके लिए अनुशंसित",
+      "description": "आपकी रुचियों और गतिविधियों के आधार पर",
+      "connectMembers": "{{count}} सदस्यों से जुड़ें",
+      "viewCommunity": "समुदाय देखें"
+    },
+    "header": {
+      "welcome": "स्वागत है, {{name}}"
+      // "settingsButton": "सेटिंग्स" - Removed
+    },
+    "tabs": {
+      "myCommunities": "मेरी समुदाय",
+      "recentActivity": "हाल की गतिविधि",
+      "account": "खाता"
+    },
+    "loading": "डैशबोर्ड लोड हो रहा है...",
+    "loadingDesc": "कृपया प्रतीक्षा करें जब तक हम आपका डेटा प्राप्त करते हैं।",
+    "accountSettings": {
+      "toastLoadError": "प्रोफ़ाइल डेटा लोड करने में विफल",
+      "toastUpdateSuccess": "प्रोफ़ाइल सफलतापूर्वक अपडेट की गई",
+      "toastUpdateError": "प्रोफ़ाइल अपडेट करने में विफल",
+      "toastAvatarSuccess": "अवतार सफलतापूर्वक अपडेट किया गया",
+      "toastAvatarError": "अवतार अपडेट करने में विफल",
+      "buttonSignOut": "साइन आउट करें",
+      "cardTitle": "व्यक्तिगत जानकारी",
+      "cardDescription": "अपने व्यक्तिगत विवरण अपडेट करें",
+      "labelFullName": "पूरा नाम",
+      "placeholderFullName": "आपका पूरा नाम",
+      "labelEmail": "ईमेल",
+      "descEmailUnchangeable": "ईमेल बदला नहीं जा सकता",
+      "labelPhone": "फ़ोन नंबर",
+      "placeholderPhone": "आपका फ़ोन नंबर",
+      "labelBio": "बायो",
+      "placeholderBio": "अपने बारे में कुछ बताएं",
+      "buttonSaving": "सहेजा जा रहा है...",
+      "buttonSaveChanges": "बदलाव सहेजें"
+    }
   }
 }

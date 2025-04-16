@@ -6,61 +6,61 @@
     "pricing": "Цены",
     "login": "Войти",
     "logout": "Выйти",
-    "dashboard": "Панель",
-    "profileSettings": "Настройки Профиля"
+    "dashboard": "Панель"
   },
   "hero": {
     "title": "Цифровая вселенная ведических проектов",
     "subtitle": "Исследуйте сообщества, знания и инструменты для духовного роста.",
     "ctaButton": "Исследовать Сообщества"
   },
-   "buttons": {
-      "joinCommunity": "Присоединиться",
-      "leaveCommunity": "Покинуть Сообщество",
-      "editCommunity": "Редактировать",
-      "signInToJoin": "Войдите, чтобы присоединиться",
-      "signInToPost": "Войдите, чтобы опубликовать",
-      "joinToPost": "Присоединитесь, чтобы опубликовать",
-      "backToCommunities": "Назад к Сообществам",
-      "backToHome": "На Главную",
-      "learnMore": "Узнать больше"
+  "buttons": {
+    "joinCommunity": "Присоединиться",
+    "leaveCommunity": "Покинуть Сообщество",
+    "editCommunity": "Редактировать",
+    "signInToJoin": "Войдите, чтобы присоединиться",
+    "signInToPost": "Войдите, чтобы опубликовать",
+    "joinToPost": "Присоединитесь, чтобы опубликовать",
+    "backToCommunities": "Назад к Сообществам",
+    "backToHome": "На Главную",
+    "learnMore": "Узнать больше"
   },
-   "community": {
-      "loading": "Загрузка данных сообщества...",
-      "loadError": "Не удалось загрузить данные сообщества",
-      "loadPostsError": "Не удалось загрузить посты сообщества",
-      "signInToJoinInfo": "Пожалуйста, войдите, чтобы присоединиться к сообществам.",
-      "notFound": "Сообщество не найдено",
-      "notFoundDesc": "Сообщество, которое вы ищете, не существует или не может быть загружено.",
-      "premium": "Премиум Сообщество",
-      "free": "Бесплатное Сообщество",
-      "stats": "Статистика Сообщества",
-      "members": "Участников: {{count}}",
-      "posts": "Постов: {{count}}",
-      "created": "Создано {{date}}",
-      "topics": "Темы",
-      "noTopics": "Темы не указаны",
-      "about": "Об этом Сообществе",
-      "noDescription": "Описание не предоставлено.",
-      "communityPosts": "Посты Сообщества",
-      "loadingPosts": "Загрузка постов...",
-      "noPosts": "Постов пока нет",
-      "firstPost": "Будьте первым, кто поделится чем-то с сообществом!",
-      "rules": "Правила Сообщества",
-      "checkingMembership": "Проверка...",
-      "joinSuccess": "Вы успешно присоединились к {{name}}!",
-      "leaveSuccess": "Вы покинули {{name}}.",
-      "joinError": "Не удалось присоединиться к сообществу.",
-      "leaveError": "Не удалось покинуть сообщество.",
-      "membershipError": "Не удалось проверить статус участия.",
-      "defaultTitle": "Сообщество"
+  "community": {
+    "loading": "Загрузка данных сообщества...",
+    "loadError": "Не удалось загрузить данные сообщества",
+    "loadPostsError": "Не удалось загрузить посты сообщества",
+    "signInToJoinInfo": "Пожалуйста, войдите, чтобы присоединиться к сообществам.",
+    "notFound": "Сообщество не найдено",
+    "notFoundDesc": "Сообщество, которое вы ищете, не существует или не может быть загружено.",
+    "premium": "Премиум Сообщество",
+    "free": "Бесплатное Сообщество",
+    "stats": "Статистика Сообщества",
+    "members": "Участников: {{count}}",
+    "posts": "Постов: {{count}}",
+    "created": "Создано {{date}}",
+    "topics": "Темы",
+    "noTopics": "Темы не указаны",
+    "about": "Об этом Сообществе",
+    "noDescription": "Описание не предоставлено.",
+    "communityPosts": "Посты Сообщества",
+    "loadingPosts": "Загрузка постов...",
+    "noPosts": "Постов пока нет",
+    "firstPost": "Будьте первым, кто поделится чем-то с сообществом!",
+    "rules": "Правила Сообщества",
+    "checkingMembership": "Проверка...",
+    "joinSuccess": "Вы успешно присоединились к {{name}}!",
+    "leaveSuccess": "Вы покинули {{name}}.",
+    "joinError": "Не удалось присоединиться к сообществу.",
+    "leaveError": "Не удалось покинуть сообщество.",
+    "membershipError": "Не удалось проверить статус участия.",
+    "defaultTitle": "Сообщество",
+    "loadAvatarsError": "Не удалось загрузить аватарки некоторых участников"
   },
   "communityCard": {
-      "premium": "Премиум",
-      "members": "Участников: {{count}}",
-      "moreTopics": "+{{count}} еще",
-      "joinFree": "Присоединиться бесплатно",
-      "joinPremium": "Присоединиться за ${{price}}/мес"
+    "premium": "Премиум",
+    "members": "Участников: {{count}}",
+    "moreTopics": "+{{count}} еще",
+    "joinFree": "Присоединиться бесплатно",
+    "joinPremium": "Присоединиться за ${{price}}/мес"
   },
   "index": {
     "loadMissionError": "Не удалось загрузить данные миссии.",
@@ -73,9 +73,57 @@
     "ctaSubtitle": "Присоединяйтесь к сообществам, получайте доступ к знаниям и начните свой путь сегодня.",
     "ctaButton": "Начать"
   },
-   "mission": {
+  "mission": {
     "sectionTitle": "Наша Миссия",
     "loading": "Загрузка миссии...",
     "noData": "Данные миссии временно недоступны."
+  },
+  "dashboard": {
+    "userCommunities": {
+      "title": "Ваши Сообщества",
+      "description": "Сообщества, в которых вы сейчас состоите",
+      "joinNew": "Присоединиться к новым",
+      "unreadMessages": "новых",
+      "enter": "Войти",
+      "emptyTitle": "Сообществ пока нет",
+      "emptyDescription": "Вы еще не присоединились ни к одному сообществу",
+      "emptyButton": "Найти Сообщества"
+    },
+    "recommendedCommunities": {
+      "title": "Рекомендовано Вам",
+      "description": "На основе ваших интересов и активности",
+      "connectMembers": "{{count}} участников",
+      "viewCommunity": "Посмотреть Сообщество"
+    },
+    "header": {
+      "welcome": "Добро пожаловать, {{name}}"
+    },
+    "tabs": {
+      "myCommunities": "Мои Сообщества",
+      "recentActivity": "Недавняя Активность",
+      "account": "Аккаунт"
+    },
+    "loading": "Загрузка Панели...",
+    "loadingDesc": "Пожалуйста, подождите, пока мы загружаем ваши данные.",
+    "accountSettings": {
+      "toastLoadError": "Не удалось загрузить данные профиля",
+      "toastUpdateSuccess": "Профиль успешно обновлен",
+      "toastUpdateError": "Не удалось обновить профиль",
+      "toastAvatarSuccess": "Аватар успешно обновлен",
+      "toastAvatarError": "Не удалось обновить аватар",
+      "buttonSignOut": "Выйти",
+      "cardTitle": "Личная Информация",
+      "cardDescription": "Обновите ваши личные данные",
+      "labelFullName": "Полное Имя",
+      "placeholderFullName": "Ваше полное имя",
+      "labelEmail": "Email",
+      "descEmailUnchangeable": "Email изменить нельзя",
+      "labelPhone": "Номер Телефона",
+      "placeholderPhone": "Ваш номер телефона",
+      "labelBio": "О себе",
+      "placeholderBio": "Расскажите немного о себе",
+      "buttonSaving": "Сохранение...",
+      "buttonSaveChanges": "Сохранить Изменения"
+    }
   }
 }
