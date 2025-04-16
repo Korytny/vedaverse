@@ -90,7 +90,8 @@ const CommunityCard = ({
     >
       <Card className="overflow-hidden h-full flex flex-col bg-card hover:border-primary/50 transition-colors duration-300 shadow-sm rounded-lg">
         <Link to={`/project/${id}`} className="block focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-t-lg" aria-label={title}> 
-          <div className="relative h-40 w-full bg-muted flex items-center justify-center overflow-hidden rounded-t-lg">
+          {/* Changed h-40 to aspect-video */}
+          <div className="relative aspect-video w-full bg-muted flex items-center justify-center overflow-hidden rounded-t-lg">
             <img
               src={image_url || './placeholder.svg'}
               alt={title}

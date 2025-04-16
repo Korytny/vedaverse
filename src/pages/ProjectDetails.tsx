@@ -271,7 +271,8 @@ const ProjectDetails = () => {
                 <img
                   src={community.image_url || './placeholder.svg'}
                   alt={communityTitle}
-                  className="w-full h-auto aspect-square object-cover bg-muted"
+                  // Changed aspect-square to aspect-video
+                  className="w-full h-auto aspect-video object-cover bg-muted"
                   onError={(e) => (e.currentTarget.src = './placeholder.svg')}
                 />
               </div>
