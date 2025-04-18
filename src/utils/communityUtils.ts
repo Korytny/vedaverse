@@ -12,8 +12,8 @@ export const fetchCommunityDetails = async (communityId: string) => {
     const { data: communityData, error: communityError } = await supabase
       .from('communities')
       .select(`
-        id, name, description, short_description, members_count, image_url, topics, created_at
-      `)
+        id, name, description, short_description, members_count, image_url, topics, created_at, rules, owners_id 
+      `) // Added 'owners_id' field
       .eq('id', communityId)
       .single();
 
@@ -93,6 +93,7 @@ export const joinCommunity = async (
           image_url: communityImage,
           members_count: 1,
           topics: topics || []
+          // Consider setting initial owner here if applicable
         })
         .select('id, members_count')
         .single();

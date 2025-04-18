@@ -4,7 +4,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PageTransition from '@/components/PageTransition';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Users, Calendar, BookOpen, Edit, Loader2 } from 'lucide-react';
+import { ArrowLeft, Users, Calendar, BookOpen, Loader2 } from 'lucide-react'; // Removed Edit icon
 import { fetchCommunityDetails, joinCommunity, leaveCommunity, checkUserMembership } from '@/utils/communityUtils'; 
 import { fetchCommunityPosts } from '@/utils/postUtils';
 import { useAuth } from '@/context/AuthContext';
@@ -32,6 +32,8 @@ interface CommunityData {
   topics: any[] | null; 
   createdAt?: string; 
   created_at?: string; 
+  rules?: string | object; 
+  owners_id?: string[] | null; 
   members: CommunityMemberWithAvatar[]; 
   posts?: any[]; 
 }
@@ -48,6 +50,19 @@ const ProjectDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t, i18n } = useTranslation();
+
+  // Determine if the current user is an owner
+  const isOwner = useMemo(() => {
+      if (!user || !community?.owners_id) {
+          return false;
+      }
+      // Ensure owners_id is treated as an array
+      const owners = Array.isArray(community.owners_id) ? community.owners_id : [];
+      return owners.includes(user.id);
+  }, [user, community?.owners_id]);
+
+  // Remove Ownership Check Log if no longer needed
+  // useEffect(() => { ... }, [user, community, isOwner, isMember]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -72,8 +87,6 @@ const ProjectDetails = () => {
         const communityData = await fetchCommunityDetails(id); 
         if (!isMounted) return; 
         if (communityData) {
-          // *** ADD CONSOLE LOG HERE ***
-          console.log("Setting community state with members:", communityData.members);
           setCommunity(communityData as CommunityData); 
         } else {
           setCommunity(null);
@@ -92,7 +105,7 @@ const ProjectDetails = () => {
     };
     loadData(t); 
     return () => { isMounted = false; }; 
-  }, [id]); 
+  }, [id, t]); 
 
   // Membership check effect
   useEffect(() => {
@@ -166,7 +179,7 @@ const ProjectDetails = () => {
         community.topics
       );
       if (result) {
-        setIsMember(true);
+        setIsMember(true); 
         const updatedCommunityData = await fetchCommunityDetails(community.id);
         if (updatedCommunityData) setCommunity(updatedCommunityData as CommunityData);
         toast.success(t('community.joinSuccess', { name: communityNameForToast })); 
@@ -203,8 +216,8 @@ const ProjectDetails = () => {
   const communityTitle = getTranslatedField(community?.name as any, t('community.defaultTitle'));
   const communityShortDescription = getTranslatedField(community?.short_description as any, '');
   const communityLongDescription = getTranslatedField(community?.description as any, t('community.noDescription'));
+  const communityRules = getTranslatedField(community?.rules as any, t('community.noRules'));
 
-  // Prepare data directly from community.members
   const memberAvatarsForStack = useMemo(() => (community?.members || [])
       .map(member => ({ avatar_url: member.avatar_url || null })), 
       [community?.members]); 
@@ -258,12 +271,7 @@ const ProjectDetails = () => {
                   {t('buttons.backToCommunities')}
                 </Link>
               </Button>
-              <Button variant="outline" asChild>
-                <Link to={`/admin/edit-project/${id}`} className="flex items-center gap-2">
-                  <Edit className="h-4 w-4" />
-                  {t('buttons.editCommunity')}
-                </Link>
-              </Button>
+              {/* Edit button removed */}
             </div>
 
              <div className="flex flex-col md:flex-row gap-8 mb-8">
@@ -271,7 +279,6 @@ const ProjectDetails = () => {
                 <img
                   src={community.image_url || './placeholder.svg'}
                   alt={communityTitle}
-                  // Changed aspect-square to aspect-video
                   className="w-full h-auto aspect-video object-cover bg-muted"
                   onError={(e) => (e.currentTarget.src = './placeholder.svg')}
                 />
@@ -308,7 +315,6 @@ const ProjectDetails = () => {
                   <h3 className="text-sm font-semibold mb-3 uppercase text-muted-foreground">{t('community.stats')}</h3>
                   <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                     <div className="flex items-center gap-2">
-                      {/* Use main loading state */}
                       {loading ? (
                          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                       ) : memberAvatarsForStack.length > 0 ? (
@@ -360,7 +366,8 @@ const ProjectDetails = () => {
                   </div>
                   <div className="border-t pt-8">
                     <h2 className="text-2xl font-bold mb-4">{t('community.communityPosts')}</h2>
-                    {user && isMember && (
+                    {/* Show Create Post Form only to owners who are members */}
+                    {user && isMember && isOwner && (
                       <div className="mb-6 p-4 border rounded-lg bg-card shadow-sm">
                         <CreatePostForm communityId={id || ''} onPostCreated={loadPosts} />
                        </div>
@@ -373,13 +380,24 @@ const ProjectDetails = () => {
                     ) : posts.length > 0 ? (
                       <div className="space-y-6">
                         {posts.map((post) => (
-                          <PostItem key={post.id} post={post} />
+                          <PostItem 
+                              key={post.id} 
+                              post={post} 
+                              // Pass owner status to PostItem
+                              isOwner={isOwner} 
+                          />
                         ))}
                       </div>
                     ) : (
                       <div className="text-center py-12 bg-card border rounded-xl">
                         <h3 className="text-xl font-medium mb-2">{t('community.noPosts')}</h3>
-                        <p className="text-muted-foreground mb-4">{t('community.firstPost')}</p>
+                        {/* Adjust message based on ownership */}
+                        {user && isMember && isOwner ? (
+                            <p className="text-muted-foreground mb-4">{t('community.firstPostOwner', 'Share the first post with the community!')}</p>
+                        ) : (
+                            <p className="text-muted-foreground mb-4">{t('community.firstPost')}</p>
+                        )}
+                        {/* Button logic based on membership/login status remains */}
                         {user ? (
                           !isMember && !membershipLoading && (
                             <Button onClick={handleJoin}>{t('buttons.joinToPost')}</Button>
@@ -394,12 +412,10 @@ const ProjectDetails = () => {
 
                 <div className="md:col-span-1 bg-card border p-6 rounded-xl space-y-6 self-start h-fit shadow-sm">
                   <h2 className="text-lg font-semibold mb-4">{t('community.rules')}</h2>
-                  <ul className="space-y-3 text-sm text-muted-foreground">
-                    <li className="flex items-start gap-2"><span className="font-semibold text-foreground">1.</span><span>Be respectful to other members.</span></li>
-                    <li className="flex items-start gap-2"><span className="font-semibold text-foreground">2.</span><span>Keep discussions relevant to the community topics.</span></li>
-                    <li className="flex items-start gap-2"><span className="font-semibold text-foreground">3.</span><span>No spam, excessive self-promotion, or NSFW content.</span></li>
-                    <li className="flex items-start gap-2"><span className="font-semibold text-foreground">4.</span><span>Share knowledge, ask questions, and help others learn.</span></li>
-                  </ul>
+                  <div 
+                    className="prose prose-sm max-w-none dark:prose-invert text-muted-foreground"
+                    dangerouslySetInnerHTML={{ __html: communityRules || '' }} 
+                  />
                 </div>
               </div>
             </div>

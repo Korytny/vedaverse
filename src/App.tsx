@@ -10,7 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import Communities from "./pages/Communities";
 import NotFound from "./pages/NotFound";
 import ProjectDetails from "./pages/ProjectDetails";
-import AdminEditProject from "./pages/AdminEditProject";
+// import AdminEditProject from "./pages/AdminEditProject"; // Removed import
 import AuthCallback from "./pages/AuthCallback";
 // import Profile from "./pages/Profile"; // Remove import
 import { LanguageProvider } from "./context/LanguageContext";
@@ -31,7 +31,7 @@ const App = () => (
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/communities" element={<Communities />} />
                 <Route path="/project/:id" element={<ProjectDetails />} />
-                <Route path="/admin/edit-project/:id" element={<AdminEditProject />} />
+                {/* <Route path="/admin/edit-project/:id" element={<AdminEditProject />} /> */}{/* Removed route */}
                 <Route path="/auth/callback" element={<AuthCallback />} />
                 {/* <Route path="/profile" element={<Profile />} /> */}{/* Remove route */}
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

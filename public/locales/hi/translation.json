@@ -45,14 +45,17 @@
     "loadingPosts": "पोस्ट लोड हो रहे हैं...",
     "noPosts": "अभी तक कोई पोस्ट नहीं है",
     "firstPost": "समुदाय के साथ कुछ साझा करने वाले पहले व्यक्ति बनें!",
+    "firstPostOwner": "Share the first post with the community!", 
     "rules": "समुदाय के नियम",
+    "noRules": "No rules provided.",
     "checkingMembership": "जाँच हो रही है...",
     "joinSuccess": "आप {{name}} में सफलतापूर्वक शामिल हो गए हैं!",
     "leaveSuccess": "आपने {{name}} छोड़ दिया है।",
     "joinError": "समुदाय में शामिल होने में विफल।",
     "leaveError": "समुदाय छोड़ने में विफल।",
     "membershipError": "सदस्यता स्थिति सत्यापित नहीं की जा सकी।",
-    "defaultTitle": "समुदाय"
+    "defaultTitle": "समुदाय",
+    "loadAvatarsError": "Could not load some member avatars"
   },
   "communityCard": {
     "premium": "प्रीमियम",
@@ -96,7 +99,6 @@
     },
     "header": {
       "welcome": "स्वागत है, {{name}}"
-      // "settingsButton": "सेटिंग्स" - Removed
     },
     "tabs": {
       "myCommunities": "मेरी समुदाय",
@@ -125,5 +127,25 @@
       "buttonSaving": "सहेजा जा रहा है...",
       "buttonSaveChanges": "बदलाव सहेजें"
     }
+  },
+  "post": {
+    "likeError": "Failed to like post",
+    "pinned": "Pinned",
+    "share": "Share"
+  },
+  "comments": {
+    "addCommentPlaceholder": "Add a comment...",
+    "submitButton": "Comment",
+    "loadError": "Failed to load comments",
+    "addSuccess": "Comment added",
+    "addError": "Failed to add comment",
+    "signInToComment": "Sign in to view and add comments.",
+    "noComments": "No comments yet. Be the first!",
+    "deleteSuccess": "Comment deleted",
+    "deleteError": "Failed to delete comment",
+    "deleteConfirmTitle": "Are you sure?",
+    "deleteConfirmDesc": "This action cannot be undone. This will permanently delete the comment.",
+    "deleteCancel": "Cancel",
+    "deleteConfirm": "Delete"
   }
 }

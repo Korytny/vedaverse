@@ -45,7 +45,9 @@
     "loadingPosts": "Loading posts...",
     "noPosts": "No posts yet",
     "firstPost": "Be the first to share something with the community!",
+    "firstPostOwner": "Share the first post with the community!", 
     "rules": "Community Rules",
+    "noRules": "No rules provided.",
     "checkingMembership": "Checking...",
     "joinSuccess": "Successfully joined {{name}}!",
     "leaveSuccess": "You have left {{name}}.",
@@ -125,5 +127,25 @@
       "buttonSaving": "Saving...",
       "buttonSaveChanges": "Save Changes"
     }
+  },
+  "post": {
+    "likeError": "Failed to like post",
+    "pinned": "Pinned",
+    "share": "Share"
+  },
+  "comments": {
+    "addCommentPlaceholder": "Add a comment...",
+    "submitButton": "Comment",
+    "loadError": "Failed to load comments",
+    "addSuccess": "Comment added",
+    "addError": "Failed to add comment",
+    "signInToComment": "Sign in to view and add comments.",
+    "noComments": "No comments yet. Be the first!",
+    "deleteSuccess": "Comment deleted",
+    "deleteError": "Failed to delete comment",
+    "deleteConfirmTitle": "Are you sure?",
+    "deleteConfirmDesc": "This action cannot be undone. This will permanently delete the comment.",
+    "deleteCancel": "Cancel",
+    "deleteConfirm": "Delete"
   }
 }
