@@ -2,7 +2,7 @@
   "appName": "Veda Universe",
   "nav": {
     "home": "Home",
-    "communities": "Communities",
+    "communities": "Projects",
     "pricing": "Pricing",
     "login": "Login",
     "logout": "Logout",
@@ -10,30 +10,30 @@
   },
   "hero": {
     "title": "Digital universe of Vedic projects",
-    "subtitle": "Explore communities, knowledge and tools for spiritual growth.",
-    "ctaButton": "Explore Communities"
+    "subtitle": "Explore projects, knowledge and tools for spiritual growth.",
+    "ctaButton": "Explore Projects"
   },
   "buttons": {
-    "joinCommunity": "Join Community",
-    "leaveCommunity": "Leave Community",
-    "editCommunity": "Edit Community",
+    "joinCommunity": "Join Project",
+    "leaveCommunity": "Leave Project",
+    "editCommunity": "Edit Project",
     "signInToJoin": "Sign in to Join",
     "signInToPost": "Sign in to Post",
-    "joinToPost": "Join Community to Post",
-    "backToCommunities": "Back to Communities",
+    "joinToPost": "Join Project to Post",
+    "backToCommunities": "Back to Projects",
     "backToHome": "Back to Home",
     "learnMore": "Learn More"
   },
   "community": {
-    "loading": "Loading community details...",
-    "loadError": "Failed to load community details",
+    "loading": "Loading project details...",
+    "loadError": "Failed to load project details",
     "loadPostsError": "Failed to load community posts",
-    "signInToJoinInfo": "Please sign in to join communities.",
-    "notFound": "Community Not Found",
-    "notFoundDesc": "The community you're looking for doesn't exist or could not be loaded.",
-    "premium": "Premium Community",
-    "free": "Free Community",
-    "stats": "Community Stats",
+    "signInToJoinInfo": "Please sign in to join projects.",
+    "notFound": "Project Not Found",
+    "notFoundDesc": "The project you're looking for doesn't exist or could not be loaded.",
+    "premium": "Premium Project",
+    "free": "Free Project",
+    "stats": "Project Stats",
     "members": "{{count}} Members",
     "posts": "{{count}} Posts",
     "created": "Created {{date}}",
@@ -44,17 +44,16 @@
     "communityPosts": "Community Posts",
     "loadingPosts": "Loading posts...",
     "noPosts": "No posts yet",
-    "firstPost": "Be the first to share something with the community!",
-    "firstPostOwner": "Share the first post with the community!", 
-    "rules": "Community Rules",
+    "firstPost": "Be the first to share something with the project!",
+    "rules": "Project Rules",
     "noRules": "No rules provided.",
     "checkingMembership": "Checking...",
     "joinSuccess": "Successfully joined {{name}}!",
     "leaveSuccess": "You have left {{name}}.",
-    "joinError": "Failed to join community.",
-    "leaveError": "Failed to leave community.",
+    "joinError": "Failed to join project.",
+    "leaveError": "Failed to leave project.",
     "membershipError": "Could not verify membership status.",
-    "defaultTitle": "Community",
+    "defaultTitle": "Project",
     "loadAvatarsError": "Could not load some member avatars"
   },
   "communityCard": {
@@ -66,13 +65,13 @@
   },
   "index": {
     "loadMissionError": "Failed to load mission data.",
-    "loadCommunitiesError": "Failed to load communities",
-    "communitiesTitle": "Explore Communities",
-    "loadingCommunities": "Loading communities...",
-    "noCommunitiesFound": "No communities found",
+    "loadCommunitiesError": "Failed to load projects",
+    "communitiesTitle": "Explore Projects",
+    "loadingCommunities": "Loading projects...",
+    "noCommunitiesFound": "No projects found",
     "checkBackLater": "Please check back later.",
     "ctaTitle": "Ready to Explore Veda Universe?",
-    "ctaSubtitle": "Join communities, access knowledge, and start your journey today.",
+    "ctaSubtitle": "Join projects, access knowledge, and start your journey today.",
     "ctaButton": "Get Started"
   },
   "mission": {
@@ -82,26 +81,26 @@
   },
   "dashboard": {
     "userCommunities": {
-      "title": "Your Communities",
-      "description": "Communities you're currently a member of",
+      "title": "Your Projects",
+      "description": "Projects you're currently a member of",
       "joinNew": "Join New",
       "unreadMessages": "new",
       "enter": "Enter",
-      "emptyTitle": "No communities yet",
-      "emptyDescription": "You haven't joined any communities yet",
-      "emptyButton": "Browse Communities"
+      "emptyTitle": "No projects yet",
+      "emptyDescription": "You haven't joined any projects yet",
+      "emptyButton": "Browse Projects"
     },
     "recommendedCommunities": {
-      "title": "Recommended For You",
+      "title": "Recommended Projects",
       "description": "Based on your interests and activities",
       "connectMembers": "Connect with {{count}} members",
-      "viewCommunity": "View Community"
+      "viewCommunity": "View Project"
     },
     "header": {
       "welcome": "Welcome, {{name}}"
     },
     "tabs": {
-      "myCommunities": "My Communities",
+      "myCommunities": "My Projects",
       "recentActivity": "Recent Activity",
       "account": "Account"
     },

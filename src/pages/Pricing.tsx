@@ -147,12 +147,12 @@ const Pricing = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {[
                   "User-friendly interface",
-                  "Community discussions",
+                  "Project discussions",
                   "File sharing",
                   "Responsive design",
                   "Email notifications",
                   "SSL security",
-                  "Community guidelines",
+                  "Project guidelines",
                   "Member management",
                   "99.9% uptime guarantee"
                 ].map((feature, index) => (

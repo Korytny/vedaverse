@@ -76,7 +76,7 @@ const Navbar = () => {
         <div className="hidden md:flex items-center space-x-6"> 
           <div className="flex items-center space-x-4"> 
             <NavItem onClick={() => scrollToSection('hero')}>{t('nav.home')}</NavItem>
-            <NavItem onClick={() => scrollToSection('communities')}>{t('nav.communities')}</NavItem>
+            <NavItem onClick={() => scrollToSection('projects')}>{t('nav.communities')}</NavItem>
           </div>
 
           {/* Language Selector Dropdown */}
@@ -163,7 +163,7 @@ const Navbar = () => {
         >
           <div className="container mx-auto py-6 flex flex-col h-full space-y-6 text-center overflow-y-auto bg-background/95" onClick={(e) => e.stopPropagation()}>
             <MobileNavItem onClick={() => scrollToSection('hero')}>{t('nav.home')}</MobileNavItem>
-            <MobileNavItem onClick={() => scrollToSection('communities')}>{t('nav.communities')}</MobileNavItem>
+            <MobileNavItem onClick={() => scrollToSection('projects')}>{t('nav.communities')}</MobileNavItem>
 
             <div className="pt-8 border-t border-border mt-auto mb-4"> 
               {user ? (

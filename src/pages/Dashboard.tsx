@@ -2,8 +2,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import UserHeader from '@/components/dashboard/UserHeader';
-import UserCommunities from '@/components/dashboard/UserCommunities';
-import RecommendedCommunities from '@/components/dashboard/RecommendedCommunities';
+import UserProjects from '@/components/dashboard/UserProjects';
+import RecommendedProjects from '@/components/dashboard/RecommendedProjects';
 import UserActivities from '@/components/dashboard/UserActivities';
 // import UserAccount from '@/components/dashboard/UserAccount'; // Remove import
 import AccountSettings from '@/components/dashboard/AccountSettings'; // Import the new component
@@ -63,8 +63,8 @@ const Dashboard = () => {
         
         <TabsContent value="communities">
           <div className="grid grid-cols-1 gap-6">
-            <UserCommunities userCommunities={userCommunities} />
-            <RecommendedCommunities 
+            <UserProjects userCommunities={userCommunities} />
+            <RecommendedProjects
               communities={recommendedCommunities} 
               onJoin={handleJoinCommunity} 
             />

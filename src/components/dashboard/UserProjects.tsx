@@ -41,7 +41,7 @@ const UserCommunities = ({ userCommunities }: UserCommunitiesProps) => {
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle>{t('dashboard.userCommunities.title')}</CardTitle>
-          <Button onClick={() => navigate('/communities')} size="sm" className="gap-1">
+          <Button onClick={() => navigate('/projects')} size="sm" className="gap-1">
             <PlusIcon className="h-4 w-4" />
             <span>{t('dashboard.userCommunities.joinNew')}</span>
           </Button>
@@ -98,7 +98,7 @@ const UserCommunities = ({ userCommunities }: UserCommunitiesProps) => {
             <BookOpen className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
             <h3 className="font-medium mb-1">{t('dashboard.userCommunities.emptyTitle')}</h3>
             <p className="text-sm text-muted-foreground mb-4">{t('dashboard.userCommunities.emptyDescription')}</p>
-            <Button onClick={() => navigate('/communities')}>{t('dashboard.userCommunities.emptyButton')}</Button>
+            <Button onClick={() => navigate('/projects')}>{t('dashboard.userCommunities.emptyButton')}</Button>
           </div>
         )}
       </CardContent>

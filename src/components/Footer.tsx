@@ -12,7 +12,7 @@ const Footer = () => {
               <span className="font-display font-bold text-xl">Skool</span>
             </Link>
             <p className="mt-4 text-sm text-muted-foreground max-w-md">
-              Building thriving knowledge communities has never been easier. Connect, learn, and grow together with our intuitive platform.
+              Building thriving knowledge projects has never been easier. Connect, learn, and grow together with our intuitive platform.
             </p>
           </div>
           
@@ -20,8 +20,8 @@ const Footer = () => {
             <h3 className="text-sm font-semibold mb-4">Product</h3>
             <ul className="space-y-3">
               <li>
-                <Link to="/communities" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Communities
+                <Link to="/projects" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Projects
                 </Link>
               </li>
               <li>

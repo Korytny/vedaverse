@@ -7,7 +7,7 @@ import { AnimatePresence } from "framer-motion";
 import { AuthProvider } from "./context/AuthContext";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
-import Communities from "./pages/Communities";
+import Projects from "./pages/Projects";
 import NotFound from "./pages/NotFound";
 import ProjectDetails from "./pages/ProjectDetails";
 // import AdminEditProject from "./pages/AdminEditProject"; // Removed import
@@ -29,7 +29,7 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/communities" element={<Communities />} />
+                <Route path="/projects" element={<Projects />} />
                 <Route path="/project/:id" element={<ProjectDetails />} />
                 {/* <Route path="/admin/edit-project/:id" element={<AdminEditProject />} /> */}{/* Removed route */}
                 <Route path="/auth/callback" element={<AuthCallback />} />

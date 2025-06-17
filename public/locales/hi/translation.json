@@ -2,7 +2,7 @@
   "appName": "वेद यूनिवर्स",
   "nav": {
     "home": "होम",
-    "communities": "समुदाय",
+    "communities": "प्रोजेक्ट्स",
     "pricing": "मूल्य निर्धारण",
     "login": "लॉग इन करें",
     "logout": "लॉग आउट करें",
@@ -10,51 +10,50 @@
   },
   "hero": {
     "title": "वैदिक परियोजनाओं का डिजिटल ब्रह्मांड",
-    "subtitle": "आध्यात्मिक विकास के लिए समुदायों, ज्ञान और उपकरणों का अन्वेषण करें।",
-    "ctaButton": "समुदायों का अन्वेषण करें"
+    "subtitle": "आध्यात्मिक विकास के लिए प्रोजेक्ट्स, ज्ञान और उपकरणों का अन्वेषण करें।",
+    "ctaButton": "प्रोजेक्ट्स का अन्वेषण करें"
   },
   "buttons": {
-    "joinCommunity": "समुदाय में शामिल हों",
-    "leaveCommunity": "समुदाय छोड़ें",
-    "editCommunity": "समुदाय संपादित करें",
+    "joinCommunity": "प्रोजेक्ट में शामिल हों",
+    "leaveCommunity": "प्रोजेक्ट छोड़ें",
+    "editCommunity": "प्रोजेक्ट संपादित करें",
     "signInToJoin": "शामिल होने के लिए साइन इन करें",
     "signInToPost": "पोस्ट करने के लिए साइन इन करें",
-    "joinToPost": "पोस्ट करने के लिए समुदाय में शामिल हों",
-    "backToCommunities": "समुदायों पर वापस",
+    "joinToPost": "पोस्ट करने के लिए प्रोजेक्ट में शामिल हों",
+    "backToCommunities": "प्रोजेक्ट्स पर वापस",
     "backToHome": "होम पर वापस",
     "learnMore": "और जानें"
   },
   "community": {
-    "loading": "समुदाय विवरण लोड हो रहा है...",
-    "loadError": "समुदाय विवरण लोड करने में विफल",
+    "loading": "प्रोजेक्ट विवरण लोड हो रहा है...",
+    "loadError": "प्रोजेक्ट विवरण लोड करने में विफल",
     "loadPostsError": "समुदाय पोस्ट लोड करने में विफल",
-    "signInToJoinInfo": "कृपया समुदायों में शामिल होने के लिए साइन इन करें।",
-    "notFound": "समुदाय नहीं मिला",
-    "notFoundDesc": "आप जिस समुदाय की तलाश कर रहे हैं वह मौजूद नहीं है या लोड नहीं किया जा सका।",
-    "premium": "प्रीमियम समुदाय",
-    "free": "निःशुल्क समुदाय",
-    "stats": "समुदाय आँकड़े",
+    "signInToJoinInfo": "कृपया प्रोजेक्ट्स में शामिल होने के लिए साइन इन करें।",
+    "notFound": "प्रोजेक्ट नहीं मिला",
+    "notFoundDesc": "आप जिस प्रोजेक्ट की तलाश कर रहे हैं वह मौजूद नहीं है या लोड नहीं किया जा सका।",
+    "premium": "प्रीमियम प्रोजेक्ट",
+    "free": "निःशुल्क प्रोजेक्ट",
+    "stats": "प्रोजेक्ट आँकड़े",
     "members": "{{count}} सदस्य",
     "posts": "{{count}} पोस्ट",
     "created": "{{date}} को बनाया गया",
     "topics": "शामिल विषय",
     "noTopics": "कोई विषय निर्दिष्ट नहीं है",
-    "about": "इस समुदाय के बारे में",
+    "about": "इस प्रोजेक्ट के बारे में",
     "noDescription": "कोई विवरण प्रदान नहीं किया गया।",
     "communityPosts": "सामुदायिक पोस्ट",
     "loadingPosts": "पोस्ट लोड हो रहे हैं...",
     "noPosts": "अभी तक कोई पोस्ट नहीं है",
-    "firstPost": "समुदाय के साथ कुछ साझा करने वाले पहले व्यक्ति बनें!",
-    "firstPostOwner": "Share the first post with the community!", 
-    "rules": "समुदाय के नियम",
+    "firstPost": "प्रोजेक्ट के साथ कुछ साझा करने वाले पहले व्यक्ति बनें!",
+    "rules": "प्रोजेक्ट के नियम",
     "noRules": "No rules provided.",
     "checkingMembership": "जाँच हो रही है...",
     "joinSuccess": "आप {{name}} में सफलतापूर्वक शामिल हो गए हैं!",
     "leaveSuccess": "आपने {{name}} छोड़ दिया है।",
-    "joinError": "समुदाय में शामिल होने में विफल।",
-    "leaveError": "समुदाय छोड़ने में विफल।",
+    "joinError": "प्रोजेक्ट में शामिल होने में विफल।",
+    "leaveError": "प्रोजेक्ट छोड़ने में विफल।",
     "membershipError": "सदस्यता स्थिति सत्यापित नहीं की जा सकी।",
-    "defaultTitle": "समुदाय",
+    "defaultTitle": "प्रोजेक्ट",
     "loadAvatarsError": "Could not load some member avatars"
   },
   "communityCard": {
@@ -66,13 +65,13 @@
   },
   "index": {
     "loadMissionError": "मिशन डेटा लोड करने में विफल।",
-    "loadCommunitiesError": "समुदायों को लोड करने में विफल",
-    "communitiesTitle": "समुदायों का अन्वेषण करें",
-    "loadingCommunities": "समुदाय लोड हो रहे हैं...",
-    "noCommunitiesFound": "कोई समुदाय नहीं मिला",
+    "loadCommunitiesError": "प्रोजेक्ट्स को लोड करने में विफल",
+    "communitiesTitle": "प्रोजेक्ट्स का अन्वेषण करें",
+    "loadingCommunities": "प्रोजेक्ट्स लोड हो रहे हैं...",
+    "noCommunitiesFound": "कोई प्रोजेक्ट नहीं मिला",
     "checkBackLater": "कृपया बाद में फिर से जाँच करें।",
     "ctaTitle": "वेद यूनिवर्स का अन्वेषण करने के लिए तैयार हैं?",
-    "ctaSubtitle": "समुदायों में शामिल हों, ज्ञान प्राप्त करें, और आज ही अपनी यात्रा शुरू करें।",
+    "ctaSubtitle": "प्रोजेक्ट्स में शामिल हों, ज्ञान प्राप्त करें, और आज ही अपनी यात्रा शुरू करें।",
     "ctaButton": "शुरू करें"
   },
   "mission": {
@@ -82,26 +81,26 @@
   },
   "dashboard": {
     "userCommunities": {
-      "title": "आपकी समुदाय",
-      "description": "समुदाय जिनके आप वर्तमान में सदस्य हैं",
+      "title": "आपके प्रोजेक्ट्स",
+      "description": "प्रोजेक्ट्स जिनके आप वर्तमान में सदस्य हैं",
       "joinNew": "नया शामिल हों",
       "unreadMessages": "नये",
       "enter": "प्रवेश करें",
-      "emptyTitle": "अभी तक कोई समुदाय नहीं",
-      "emptyDescription": "आप अभी तक किसी भी समुदाय में शामिल नहीं हुए हैं",
-      "emptyButton": "समुदाय ब्राउज़ करें"
+      "emptyTitle": "अभी तक कोई प्रोजेक्ट नहीं",
+      "emptyDescription": "आप अभी तक किसी भी प्रोजेक्ट में शामिल नहीं हुए हैं",
+      "emptyButton": "प्रोजेक्ट्स ब्राउज़ करें"
     },
     "recommendedCommunities": {
-      "title": "आपके लिए अनुशंसित",
+      "title": "अनुशंसित प्रोजेक्ट्स",
       "description": "आपकी रुचियों और गतिविधियों के आधार पर",
       "connectMembers": "{{count}} सदस्यों से जुड़ें",
-      "viewCommunity": "समुदाय देखें"
+      "viewCommunity": "प्रोजेक्ट देखें"
     },
     "header": {
       "welcome": "स्वागत है, {{name}}"
     },
     "tabs": {
-      "myCommunities": "मेरी समुदाय",
+      "myCommunities": "मेरे प्रोजेक्ट्स",
       "recentActivity": "हाल की गतिविधि",
       "account": "खाता"
     },

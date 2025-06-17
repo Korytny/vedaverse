@@ -12,7 +12,7 @@ import { joinCommunity } from '@/utils/communityUtils';
 import { getTranslatedField } from '@/utils/getTranslatedField';
 import { useTranslation } from '@/hooks/useTranslation';
 
-type CommunityCardProps = {
+type ProjectCardProps = {
   id: string;
   name: string | object;
   description?: string | object;
@@ -23,7 +23,7 @@ type CommunityCardProps = {
   topics?: {en:string, hi:string, ru:string}[]
 };
 
-const CommunityCard = ({ 
+const ProjectCard = ({
     id, 
     name, 
     description,
@@ -32,7 +32,7 @@ const CommunityCard = ({
     image_url, 
     // price = 0, // Removed price
     topics = [] 
-}: CommunityCardProps) => {
+}: ProjectCardProps) => {
   
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -158,4 +158,4 @@ const CommunityCard = ({
   );
 };
 
-export default CommunityCard;
+export default ProjectCard;

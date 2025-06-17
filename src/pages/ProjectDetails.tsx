@@ -22,7 +22,7 @@ interface CommunityMemberWithAvatar {
   user_id: string;
   avatar_url: string | null;
 }
-interface CommunityData {
+interface ProjectData {
   id: string;
   name: string | object;
   description: string | object;
@@ -40,7 +40,7 @@ interface CommunityData {
 
 const ProjectDetails = () => {
   const { id } = useParams<{ id: string }>();
-  const [community, setCommunity] = useState<CommunityData | null>(null);
+  const [project, setProject] = useState<ProjectData | null>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [postsLoading, setPostsLoading] = useState(true);
@@ -53,16 +53,16 @@ const ProjectDetails = () => {
 
   // Determine if the current user is an owner
   const isOwner = useMemo(() => {
-      if (!user || !community?.owners_id) {
+      if (!user || !project?.owners_id) {
           return false;
       }
       // Ensure owners_id is treated as an array
-      const owners = Array.isArray(community.owners_id) ? community.owners_id : [];
+      const owners = Array.isArray(project.owners_id) ? project.owners_id : [];
       return owners.includes(user.id);
-  }, [user, community?.owners_id]);
+  }, [user, project?.owners_id]);
 
   // Remove Ownership Check Log if no longer needed
-  // useEffect(() => { ... }, [user, community, isOwner, isMember]);
+  // useEffect(() => { ... }, [user, project, isOwner, isMember]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -74,29 +74,29 @@ const ProjectDetails = () => {
     const loadData = async (translate: TFunction) => { 
       if (!id) {
         if (isMounted) setLoading(false);
-        setCommunity(null);
+        setProject(null);
         return;
       }
       if (isMounted) {
         setLoading(true);
-        setCommunity(null); 
+        setProject(null);
         setPosts([]);
         setIsMember(null);
       }
       try {
-        const communityData = await fetchCommunityDetails(id); 
+        const projectData = await fetchCommunityDetails(id);
         if (!isMounted) return; 
-        if (communityData) {
-          setCommunity(communityData as CommunityData); 
+        if (projectData) {
+          setProject(projectData as ProjectData);
         } else {
-          setCommunity(null);
+          setProject(null);
         }
       } catch (error: any) {
          if (!isMounted) return;
-        console.error("Error loading community data:", error);
-        const errorMessage = error?.message || translate('community.loadError', "Failed to load community details"); 
+        console.error("Error loading project data:", error);
+        const errorMessage = error?.message || translate('community.loadError', "Failed to load project details");
         toast.error(errorMessage);
-        setCommunity(null);
+        setProject(null);
       } finally {
          if (isMounted) {
             setLoading(false);
@@ -111,10 +111,10 @@ const ProjectDetails = () => {
   useEffect(() => {
     let isMounted = true;
     const checkMembership = async (translate: TFunction) => { 
-      if (community?.id && user?.id) { 
+      if (project?.id && user?.id) {
         if (isMounted) setMembershipLoading(true);
         try {
-          const membershipStatus = await checkUserMembership(community.id, user.id);
+          const membershipStatus = await checkUserMembership(project.id, user.id);
           if (isMounted) setIsMember(membershipStatus);
         } catch (error) {
           console.error("Failed to check membership", error);
@@ -134,14 +134,14 @@ const ProjectDetails = () => {
       checkMembership(t); 
     }
     return () => { isMounted = false; };
-  }, [user?.id, community?.id, loading, t]);
+  }, [user?.id, project?.id, loading, t]);
 
   // Load posts effect
   const loadPosts = useCallback(async () => { 
-    if (!community?.id) return;
+    if (!project?.id) return;
     setPostsLoading(true);
     try {
-      const postsData = await fetchCommunityPosts(community.id);
+      const postsData = await fetchCommunityPosts(project.id);
       postsData.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
       setPosts(postsData);
     } catch (error) {
@@ -151,76 +151,76 @@ const ProjectDetails = () => {
     } finally {
       setPostsLoading(false);
     }
-  }, [community?.id, t]); 
+  }, [project?.id, t]);
 
   useEffect(() => {
-    if (community?.id) {
+    if (project?.id) {
       loadPosts();
     } else {
       setPosts([]);
     }
-  }, [community?.id, loadPosts]); 
+  }, [project?.id, loadPosts]);
 
   // --- Event Handlers --- 
-  const communityNameForToast = useMemo(() => {
-      return getTranslatedField(community?.name as any, 'community');
-  }, [community?.name, i18n.language]); 
+  const projectNameForToast = useMemo(() => {
+      return getTranslatedField(project?.name as any, 'project');
+  }, [project?.name, i18n.language]);
 
   const handleJoin = useCallback(async () => {
-    if (!user || !community) return;
+    if (!user || !project) return;
     try {
       const result = await joinCommunity(
-        community.id,
-        community.name, 
-        community.description, 
-        community.image_url || '',
-        community.members_count || 0,
+        project.id,
+        project.name,
+        project.description,
+        project.image_url || '',
+        project.members_count || 0,
         user.id,
-        community.topics
+        project.topics
       );
       if (result) {
         setIsMember(true); 
-        const updatedCommunityData = await fetchCommunityDetails(community.id);
-        if (updatedCommunityData) setCommunity(updatedCommunityData as CommunityData);
-        toast.success(t('community.joinSuccess', { name: communityNameForToast })); 
+        const updatedProjectData = await fetchCommunityDetails(project.id);
+        if (updatedProjectData) setProject(updatedProjectData as ProjectData);
+        toast.success(t('community.joinSuccess', { name: projectNameForToast }));
         loadPosts(); 
       }
     } catch (error) {
-      console.error("Error joining community:", error);
+      console.error("Error joining project:", error);
       toast.error(t('community.joinError')); 
     }
-  }, [user, community, navigate, location, t, loadPosts, communityNameForToast]); 
+  }, [user, project, navigate, location, t, loadPosts, projectNameForToast]);
 
   const handleLeave = useCallback(async () => {
-    if (!user || !community) return;
+    if (!user || !project) return;
     try {
-      const result = await leaveCommunity(community.id, user.id);
+      const result = await leaveCommunity(project.id, user.id);
       if (result) {
         setIsMember(false);
-        const updatedCommunityData = await fetchCommunityDetails(community.id);
-        if (updatedCommunityData) setCommunity(updatedCommunityData as CommunityData);
-        toast.success(t('community.leaveSuccess', { name: communityNameForToast }));
+        const updatedProjectData = await fetchCommunityDetails(project.id);
+        if (updatedProjectData) setProject(updatedProjectData as ProjectData);
+        toast.success(t('community.leaveSuccess', { name: projectNameForToast }));
       }
     } catch (error) {
-      console.error("Error leaving community:", error);
+      console.error("Error leaving project:", error);
       toast.error(t('community.leaveError'));
     }
-  }, [user, community, t, communityNameForToast]); 
+  }, [user, project, t, projectNameForToast]);
 
 
   // --- Derived State --- 
-  const createdDateFormatted = useMemo(() => community?.createdAt || community?.created_at
-    ? new Date(community.createdAt || community.created_at).toLocaleDateString(i18n.language)
-    : 'N/A', [community?.createdAt, community?.created_at, i18n.language]);
+  const createdDateFormatted = useMemo(() => project?.createdAt || project?.created_at
+    ? new Date(project.createdAt || project.created_at).toLocaleDateString(i18n.language)
+    : 'N/A', [project?.createdAt, project?.created_at, i18n.language]);
     
-  const communityTitle = getTranslatedField(community?.name as any, t('community.defaultTitle'));
-  const communityShortDescription = getTranslatedField(community?.short_description as any, '');
-  const communityLongDescription = getTranslatedField(community?.description as any, t('community.noDescription'));
-  const communityRules = getTranslatedField(community?.rules as any, t('community.noRules'));
+  const projectTitle = getTranslatedField(project?.name as any, t('community.defaultTitle'));
+  const projectShortDescription = getTranslatedField(project?.short_description as any, '');
+  const projectLongDescription = getTranslatedField(project?.description as any, t('community.noDescription'));
+  const projectRules = getTranslatedField(project?.rules as any, t('community.noRules'));
 
-  const memberAvatarsForStack = useMemo(() => (community?.members || [])
+  const memberAvatarsForStack = useMemo(() => (project?.members || [])
       .map(member => ({ avatar_url: member.avatar_url || null })), 
-      [community?.members]); 
+      [project?.members]);
 
   // --- RENDER LOGIC --- //
 
@@ -239,7 +239,7 @@ const ProjectDetails = () => {
     );
   }
 
-  if (!community) {
+  if (!project) {
      return (
       <div className="min-h-screen flex flex-col">
         <Navbar />
@@ -277,15 +277,15 @@ const ProjectDetails = () => {
              <div className="flex flex-col md:flex-row gap-8 mb-8">
               <div className="md:w-1/3 relative rounded-xl overflow-hidden self-start">
                 <img
-                  src={community.image_url || './placeholder.svg'}
-                  alt={communityTitle}
+                  src={project.image_url || './placeholder.svg'}
+                  alt={projectTitle}
                   className="w-full h-auto aspect-video object-cover bg-muted"
                   onError={(e) => (e.currentTarget.src = './placeholder.svg')}
                 />
               </div>
               <div className="md:w-2/3 space-y-4">
-                <h1 className="text-3xl md:text-4xl font-display font-bold">{communityTitle}</h1>
-                <p className="text-lg text-muted-foreground">{communityShortDescription}</p>
+                <h1 className="text-3xl md:text-4xl font-display font-bold">{projectTitle}</h1>
+                <p className="text-lg text-muted-foreground">{projectShortDescription}</p>
 
                 <div className="flex flex-wrap items-center gap-4">
                   <span className="inline-block px-3 py-1 bg-green-500/20 text-green-600 rounded-full text-sm font-medium">
@@ -323,7 +323,7 @@ const ProjectDetails = () => {
                         <Users className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       )}
                       <span className="truncate">
-                        {t('community.members', { count: community.members_count || 0 })}
+                        {t('community.members', { count: project.members_count || 0 })}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -340,7 +340,7 @@ const ProjectDetails = () => {
                 <div className="border-t border-border pt-4">
                   <h3 className="text-sm font-semibold mb-3 uppercase text-muted-foreground">{t('community.topics')}</h3>
                   <div className="flex flex-wrap gap-2">
-                    {(community.topics || []).map((topic: any, index: number) => {
+                    {(project.topics || []).map((topic: any, index: number) => {
                       const translatedTopic = getTranslatedField(topic as any, `topic-${index}`);
                       return (
                         <span key={index} className="px-2 py-0.5 bg-secondary text-secondary-foreground rounded text-xs font-medium">
@@ -348,7 +348,7 @@ const ProjectDetails = () => {
                         </span>
                       );
                     })}
-                    {(!community.topics || community.topics.length === 0) && (
+                    {(!project.topics || project.topics.length === 0) && (
                       <span className="text-muted-foreground text-sm">{t('community.noTopics')}</span>
                     )}
                   </div>
@@ -362,12 +362,12 @@ const ProjectDetails = () => {
                 <div className="md:col-span-2 space-y-8">
                   <div>
                     <h2 className="text-2xl font-bold mb-4">{t('community.about')}</h2>
-                    <div className="prose max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: communityLongDescription || '' }} />
+                    <div className="prose max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: projectLongDescription || '' }} />
                   </div>
                   <div className="border-t pt-8">
                     <h2 className="text-2xl font-bold mb-4">{t('community.communityPosts')}</h2>
-                    {/* Show Create Post Form only to owners who are members */}
-                    {user && isMember && isOwner && (
+                    {/* Show Create Post Form only to members */}
+                    {user && isMember && (
                       <div className="mb-6 p-4 border rounded-lg bg-card shadow-sm">
                         <CreatePostForm communityId={id || ''} onPostCreated={loadPosts} />
                        </div>
@@ -392,8 +392,8 @@ const ProjectDetails = () => {
                       <div className="text-center py-12 bg-card border rounded-xl">
                         <h3 className="text-xl font-medium mb-2">{t('community.noPosts')}</h3>
                         {/* Adjust message based on ownership */}
-                        {user && isMember && isOwner ? (
-                            <p className="text-muted-foreground mb-4">{t('community.firstPostOwner', 'Share the first post with the community!')}</p>
+                        {user && isMember ? (
+                            <p className="text-muted-foreground mb-4">{t('community.firstPost', 'Be the first to share something with the community!')}</p>
                         ) : (
                             <p className="text-muted-foreground mb-4">{t('community.firstPost')}</p>
                         )}
@@ -414,7 +414,7 @@ const ProjectDetails = () => {
                   <h2 className="text-lg font-semibold mb-4">{t('community.rules')}</h2>
                   <div 
                     className="prose prose-sm max-w-none dark:prose-invert text-muted-foreground"
-                    dangerouslySetInnerHTML={{ __html: communityRules || '' }} 
+                    dangerouslySetInnerHTML={{ __html: projectRules || '' }}
                   />
                 </div>
               </div>

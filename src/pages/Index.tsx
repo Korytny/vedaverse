@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import Mission from "@/components/Mission";
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import CommunityCard from '@/components/CommunityCard'; 
+import ProjectCard from '@/components/ProjectCard';
 import { useTranslation } from 'react-i18next';
 
 const Index = () => {
@@ -77,21 +77,21 @@ const Index = () => {
           <Hero />
         </section>
         
-        {/* --- Communities Section --- */}
-        <section id="communities" className="py-16 md:py-24 bg-gradient-to-b from-background to-secondary/20">
+        {/* --- Projects Section --- */}
+        <section id="projects" className="py-16 md:py-24 bg-gradient-to-b from-background to-secondary/20">
           <div className="container px-4 mx-auto">
             <h2 className="text-3xl md:text-4xl font-display font-bold text-center mb-12">
-              {t('index.communitiesTitle', 'Explore Communities')}
+              {t('index.communitiesTitle', 'Explore Projects')}
             </h2>
             
             {loadingCommunities ? (
               <div className="text-center py-12">
-                 <p>{t('index.loadingCommunities', 'Loading communities...')}</p>
+                 <p>{t('index.loadingCommunities', 'Loading projects...')}</p>
               </div>
             ) : communities.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"> 
                 {communities.map(community => (
-                  <CommunityCard 
+                  <ProjectCard
                     key={community.id} 
                     id={community.id}
                     name={community.name} 
@@ -105,7 +105,7 @@ const Index = () => {
               </div>
             ) : (
               <div className="text-center py-12 bg-card rounded-lg shadow-sm">
-                <h3 className="text-xl font-medium mb-2">{t('index.noCommunitiesFound', 'No communities found')}</h3>
+                <h3 className="text-xl font-medium mb-2">{t('index.noCommunitiesFound', 'No projects found')}</h3>
                 <p className="text-muted-foreground">{t('index.checkBackLater', 'Please check back later.')}</p>
               </div>
             )}

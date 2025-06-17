@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { getTranslatedField } from '@/utils/getTranslatedField';
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 
-type Community = {
+type Project = {
   id: string;
   name: string;
   description: string;
@@ -14,16 +14,16 @@ type Community = {
   members_count: number;
 };
 
-interface RecommendedCommunitiesProps {
-  communities: Community[];
+interface RecommendedProjectsProps {
+  projects: Project[];
 }
 
-const RecommendedCommunities = ({ communities }: RecommendedCommunitiesProps) => {
+const RecommendedProjects = ({ projects }: RecommendedProjectsProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation(); // Initialize translation hook
 
-  const handleNavigate = (communityId: string) => {
-    navigate(`/project/${communityId}`); 
+  const handleNavigate = (projectId: string) => {
+    navigate(`/project/${projectId}`);
   };
 
   return (
@@ -34,21 +34,21 @@ const RecommendedCommunities = ({ communities }: RecommendedCommunitiesProps) =>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {communities.map((community) => {
-            const communityName = getTranslatedField(community.name, 'communityName');
-            // const communityDescription = getTranslatedField(community.description, 'communityDesc');
+          {projects.map((project) => {
+            const projectName = getTranslatedField(project.name, 'projectName');
+            // const projectDescription = getTranslatedField(project.description, 'projectDesc');
 
             return (
-              <div key={community.id} className="p-4 rounded-lg border hover:shadow-sm transition-shadow">
-                <h3 className="font-medium mb-1">{communityName}</h3>
+              <div key={project.id} className="p-4 rounded-lg border hover:shadow-sm transition-shadow">
+                <h3 className="font-medium mb-1">{projectName}</h3>
                 <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-                  {t('dashboard.recommendedCommunities.connectMembers', { count: community.members_count.toLocaleString() })} 
+                  {t('dashboard.recommendedCommunities.connectMembers', { count: project.members_count.toLocaleString() })}
                 </p>
                 <Button 
                   variant="outline" 
                   size="sm" 
                   className="w-full"
-                  onClick={() => handleNavigate(community.id)}
+                  onClick={() => handleNavigate(project.id)}
                 >
                   {t('dashboard.recommendedCommunities.viewCommunity')}
                 </Button>
@@ -61,4 +61,4 @@ const RecommendedCommunities = ({ communities }: RecommendedCommunitiesProps) =>
   );
 };
 
-export default RecommendedCommunities;
+export default RecommendedProjects;

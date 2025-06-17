@@ -11,13 +11,13 @@ const features = [
   },
   {
     icon: <BookOpen className="w-8 h-8" />,
-    title: "Learning Communities",
-    description: "Join communities focused on topics you're passionate about and connect with like-minded learners."
+    title: "Learning Projects",
+    description: "Join projects focused on topics you're passionate about and connect with like-minded learners."
   },
   {
     icon: <MessageSquareText className="w-8 h-8" />,
-    title: "Community Discussions",
-    description: "Engage in meaningful conversations and knowledge sharing within your communities."
+    title: "Project Discussions",
+    description: "Engage in meaningful conversations and knowledge sharing within your projects."
   },
   {
     icon: <CreditCard className="w-8 h-8" />,
@@ -67,7 +67,7 @@ const FeaturesSection = () => {
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="text-3xl md:text-4xl font-display font-bold mb-4"
           >
-            Everything you need to build a thriving community
+            Everything you need to build a thriving project
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -76,7 +76,7 @@ const FeaturesSection = () => {
             transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="text-lg text-muted-foreground"
           >
-            Our platform provides all the tools necessary to create, manage, and grow your knowledge communities.
+            Our platform provides all the tools necessary to create, manage, and grow your knowledge projects.
           </motion.p>
         </div>
 
@@ -109,7 +109,7 @@ const FeaturesSection = () => {
           transition={{ duration: 0.6, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
           className="mt-14 text-center"
         >
-          <a href="/communities" className="inline-flex items-center text-primary hover:text-primary/80 font-medium transition-colors">
+          <a href="/projects" className="inline-flex items-center text-primary hover:text-primary/80 font-medium transition-colors">
             <span>Explore all features</span>
             <ArrowRight className="ml-1 w-4 h-4" />
           </a>
