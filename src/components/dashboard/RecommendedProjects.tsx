@@ -15,16 +15,31 @@ type Project = {
 };
 
 interface RecommendedProjectsProps {
-  projects: Project[];
+  communities?: Project[];
+  onJoin?: (id: string) => void;
 }
 
-const RecommendedProjects = ({ projects }: RecommendedProjectsProps) => {
+const RecommendedProjects = ({ communities = [], onJoin }: RecommendedProjectsProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation(); // Initialize translation hook
 
   const handleNavigate = (projectId: string) => {
     navigate(`/project/${projectId}`);
   };
+
+  if (!communities || communities.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('dashboard.recommendedCommunities.title')}</CardTitle>
+          <CardDescription>{t('dashboard.recommendedCommunities.description')}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground">No communities available</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -34,7 +49,7 @@ const RecommendedProjects = ({ projects }: RecommendedProjectsProps) => {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {projects.map((project) => {
+          {communities.map((project) => {
             const projectName = getTranslatedField(project.name, 'projectName');
             // const projectDescription = getTranslatedField(project.description, 'projectDesc');
 

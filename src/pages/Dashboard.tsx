@@ -42,8 +42,18 @@ const Dashboard = () => {
 
   if (!user || !userData) { // Added check for userData as well
     // Potentially show a message or redirect, although useDashboardData might handle it
-    console.warn("Dashboard: User or userData not available.")
-    return null;
+    console.warn("Dashboard: User or userData not available.", { user, userData })
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-500">Unable to load dashboard</h1>
+          <p className="mt-2">Please try refreshing the page or contact support.</p>
+          <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-primary text-white rounded">
+            Reload Page
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -63,11 +73,13 @@ const Dashboard = () => {
         
         <TabsContent value="communities">
           <div className="grid grid-cols-1 gap-6">
-            <UserProjects userCommunities={userCommunities} />
-            <RecommendedProjects
-              communities={recommendedCommunities} 
-              onJoin={handleJoinCommunity} 
-            />
+            <UserProjects userCommunities={userCommunities || []} />
+            {(recommendedCommunities && recommendedCommunities.length > 0) && (
+              <RecommendedProjects
+                communities={recommendedCommunities}
+                onJoin={handleJoinCommunity}
+              />
+            )}
           </div>
         </TabsContent>
         

@@ -78,7 +78,7 @@ export const useDashboardData = () => {
         if (userCommunitiesError) throw userCommunitiesError;
         
         // Transform data to match our expected format
-        const formattedUserCommunities = userCommunitiesData.map((uc) => ({
+        const formattedUserCommunities = (userCommunitiesData || []).map((uc) => ({
           ...uc,
           community: uc.community as Community
         }));

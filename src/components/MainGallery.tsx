@@ -62,14 +62,22 @@ const mediaItems = [
 
 const MainGallery = () => {
   // TODO: Add translation for title and description
+  if (!mediaItems || mediaItems.length === 0) {
+    return (
+      <section className="py-16 md:py-24 bg-background">
+        <div className="container mx-auto px-4 text-center">
+          <p>Gallery is currently unavailable</p>
+        </div>
+      </section>
+    )
+  }
+
   return (
-    <section className="py-16 md:py-24 bg-background"> {/* Adjusted padding */} 
+    <section className="py-16 md:py-24 bg-background">
       <div className="container mx-auto px-4">
-        {/* Removed min-h-screen and overflow-y-auto from here */}
         <InteractiveBentoGallery
-          mediaItems={mediaItems}
-          // These should be translated
-          title="Gallery of Inspiration"
+          mediaItems={mediaItems.filter(item => item?.url)}
+          title="Gallery of Inspiration" 
           description="Visual glimpses into the Vedic world and spiritual life"
         />
       </div>

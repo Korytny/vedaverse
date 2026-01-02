@@ -10,7 +10,7 @@ import i18n from '../i18n'; // Adjust path if your i18n config is elsewhere
  * @returns The translated string for the current language or a fallback.
  */
 export const getTranslatedField = (
-    jsonString: string | null | undefined, 
+    jsonString: string | object | null | undefined, 
     fieldName: string = 'field', // Added for logging
     fallback: string = '' 
 ): string => {

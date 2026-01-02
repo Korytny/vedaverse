@@ -31,7 +31,13 @@ interface InteractiveBentoGalleryProps {
 const MediaItem = ({ item, className, onClick }: { item: MediaItemType, className?: string, onClick?: () => void }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isInView, setIsInView] = useState(false);
-  const [isBuffering, setIsBuffering] = useState(item.type === 'video'); // Start buffering state if video
+  const [isBuffering, setIsBuffering] = useState(item.type === 'video');
+  const [hasError, setHasError] = useState(false);
+
+  const handleError = () => {
+    setHasError(true);
+    console.error(`Failed to load media: ${item.url}`);
+  };
 
   // Intersection Observer for viewport visibility
   useEffect(() => {
@@ -116,8 +122,15 @@ const MediaItem = ({ item, className, onClick }: { item: MediaItemType, classNam
 
 
   if (item.type === 'video') {
+    if (hasError) {
+      return (
+        <div className={`${className} bg-gray-100 dark:bg-gray-800 flex items-center justify-center`}>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">Video unavailable</p>
+        </div>
+      );
+    }
     return (
-      <div className={`${className} relative overflow-hidden group bg-black`}> {/* Added group and bg-black */} 
+      <div className={`${className} relative overflow-hidden group bg-black`}>
         <video
           ref={videoRef}
           className="w-full h-full object-cover transition-opacity duration-300"
@@ -125,10 +138,11 @@ const MediaItem = ({ item, className, onClick }: { item: MediaItemType, classNam
           playsInline
           muted
           loop
-          preload="metadata" // Changed preload to metadata initially
-          style={{ opacity: isBuffering ? 0.5 : 1 }} // Dim if buffering
+          preload="metadata"
+          style={{ opacity: isBuffering ? 0.5 : 1 }}
+          onError={handleError}
         >
-          <source src={item.url} type="video/mp4" />
+          <source src={item.url} type="video/mp4" onError={handleError} />
         </video>
         {isBuffering && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm">
@@ -144,15 +158,23 @@ const MediaItem = ({ item, className, onClick }: { item: MediaItemType, classNam
   }
 
   // Image Item
+  if (hasError) {
+    return (
+      <div className={`${className} bg-gray-100 dark:bg-gray-800 flex items-center justify-center`}>
+        <p className="text-gray-500 dark:text-gray-400 text-sm">Image unavailable</p>
+      </div>
+    );
+  }
   return (
-    <div className={`${className} overflow-hidden group`}> {/* Added group */} 
+    <div className={`${className} overflow-hidden group`}>
       <img
         src={item.url}
         alt={item.title}
-        className="w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105" // Added hover effect
+        className="w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105"
         onClick={onClick}
         loading="lazy"
         decoding="async"
+        onError={handleError}
       />
     </div>
   );

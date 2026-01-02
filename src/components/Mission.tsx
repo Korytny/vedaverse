@@ -20,9 +20,9 @@ const Mission: React.FC<MissionProps> = ({ missionData, isLoading }) => {
   const { t } = useTranslation();
 
   const defaultBackgrounds = [
-    "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//Govinda_Maharaj.jpg",
+    "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//Sridhar_Maharaj.jpg",
     "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//Saraswati_Thakur.jpg",
-    "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//Sridhar_Maharaj.jpg"
+    "https://mcgjdjifyfojfjnkttkn.supabase.co/storage/v1/object/public/website//Govinda_Maharaj.jpg"
   ];
 
   if (isLoading) {
