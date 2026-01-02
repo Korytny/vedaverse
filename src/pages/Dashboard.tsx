@@ -5,8 +5,10 @@ import UserHeader from '@/components/dashboard/UserHeader';
 import UserProjects from '@/components/dashboard/UserProjects';
 import RecommendedProjects from '@/components/dashboard/RecommendedProjects';
 import UserActivities from '@/components/dashboard/UserActivities';
-// import UserAccount from '@/components/dashboard/UserAccount'; // Remove import
-import AccountSettings from '@/components/dashboard/AccountSettings'; // Import the new component
+import AccountSettings from '@/components/dashboard/AccountSettings';
+import { MyTasks } from '@/components/tasks/MyTasks';
+import { OwnerAdmin } from '@/components/tasks/OwnerAdmin';
+import { MyCommunities } from '@/components/dashboard/MyCommunities';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useTranslation } from 'react-i18next'; 
 
@@ -67,6 +69,9 @@ const Dashboard = () => {
       <Tabs defaultValue="communities" className="w-full">
         <TabsList className="mb-6">
           <TabsTrigger value="communities">{t('dashboard.tabs.myCommunities')}</TabsTrigger>
+          <TabsTrigger value="my-communities">My Communities</TabsTrigger>
+          <TabsTrigger value="my-tasks">My Tasks</TabsTrigger>
+          <TabsTrigger value="owner-admin">Owner Admin</TabsTrigger>
           <TabsTrigger value="activity">{t('dashboard.tabs.recentActivity')}</TabsTrigger>
           <TabsTrigger value="settings">{t('dashboard.tabs.account')}</TabsTrigger>
         </TabsList>
@@ -82,20 +87,25 @@ const Dashboard = () => {
             )}
           </div>
         </TabsContent>
+
+        <TabsContent value="my-communities">
+          <MyCommunities />
+        </TabsContent>
         
         <TabsContent value="activity">
           <UserActivities activities={activities} />
         </TabsContent>
         
         <TabsContent value="settings">
-          {/* Replace UserAccount with AccountSettings */}
-          <AccountSettings /> 
-          {/* Removed props as AccountSettings fetches its own data using useAuth */}
-          {/* <UserAccount 
-            name={userData.name}
-            email={userData.email}
-            avatar={userData.avatar}
-          /> */}
+          <AccountSettings />
+        </TabsContent>
+
+        <TabsContent value="my-tasks">
+          <MyTasks />
+        </TabsContent>
+
+        <TabsContent value="owner-admin">
+          <OwnerAdmin />
         </TabsContent>
       </Tabs>
     </DashboardLayout>

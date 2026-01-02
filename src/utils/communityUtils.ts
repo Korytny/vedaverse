@@ -8,12 +8,12 @@ interface CommunityMemberWithAvatar {
 
 export const fetchCommunityDetails = async (communityId: string) => {
   try {
-    // --- First Query: Fetch main community details --- 
+    // --- First Query: Fetch main community details ---
     const { data: communityData, error: communityError } = await supabase
       .from('communities')
       .select(`
-        id, name, description, short_description, members_count, image_url, topics, created_at, rules, owners_id 
-      `) // Added 'owners_id' field
+        id, name, description, short_description, members_count, image_url, topics, created_at, rules, owners_id, created_by
+      `)
       .eq('id', communityId)
       .single();
 
@@ -26,13 +26,13 @@ export const fetchCommunityDetails = async (communityId: string) => {
       return null; // Community not found
     }
 
-    // --- Second Query: Call RPC function to get members with avatars --- 
+    // --- Second Query: Call RPC function to get members with avatars ---
     let membersWithAvatars: CommunityMemberWithAvatar[] = [];
     try {
       const { data: memberData, error: rpcError } = await supabase.rpc('get_community_members_with_avatars', {
-        p_community_id: communityId 
+        p_community_id: communityId
       });
-        
+
       // *** ADD CONSOLE LOG HERE ***
       console.log(`[RPC Result for ${communityId}]:`, memberData);
 
@@ -45,10 +45,31 @@ export const fetchCommunityDetails = async (communityId: string) => {
          console.error("Caught error calling RPC:", err);
     }
 
+    // --- Third Query: Get creator profile ---
+    let creatorProfile: { full_name: string | null; avatar_url: string | null } | null = null;
+    if (communityData.created_by) {
+      try {
+        const { data: creatorData, error: creatorError } = await supabase
+          .from('profiles')
+          .select('full_name, avatar_url')
+          .eq('id', communityData.created_by)
+          .single();
+
+        if (creatorError) {
+          console.error("Error fetching creator profile:", creatorError);
+        } else {
+          creatorProfile = creatorData;
+        }
+      } catch(err) {
+        console.error("Caught error fetching creator:", err);
+      }
+    }
+
     // Return combined data
     return {
       ...communityData,
-      members: membersWithAvatars, 
+      members: membersWithAvatars,
+      creator: creatorProfile,
     };
 
   } catch (error) {

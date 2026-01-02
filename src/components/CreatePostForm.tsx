@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { createPost } from '@/utils/postUtils';
@@ -72,39 +71,36 @@ const CreatePostForm = ({ communityId, onPostCreated }: CreatePostFormProps) => 
   const userAvatar = user?.user_metadata?.avatar_url || '';
   
   return (
-    <Card className="mb-6">
-      <CardContent className="pt-6">
-        <div className="flex items-start gap-3 mb-4">
-          <Avatar>
-            <AvatarImage src={userAvatar} alt={userFullName} />
-            <AvatarFallback>{getInitials(userFullName)}</AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <form onSubmit={handleSubmit}>
-              <Input
-                placeholder="Post title"
-                className="mb-2"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                disabled={isSubmitting}
-              />
-              <Textarea
-                placeholder="Write something..."
-                className="min-h-24 mb-3"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                disabled={isSubmitting}
-              />
-              <div className="flex justify-end">
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? 'Posting...' : 'Post'}
-                </Button>
-              </div>
-            </form>
+    <div className="flex items-start gap-3">
+      <Avatar>
+        <AvatarImage src={userAvatar} alt={userFullName} />
+        <AvatarFallback>{getInitials(userFullName)}</AvatarFallback>
+      </Avatar>
+      <div className="flex-1">
+        <form onSubmit={handleSubmit}>
+          <div className="mb-2">
+            <Input
+              placeholder="Post title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              disabled={isSubmitting}
+            />
           </div>
-        </div>
-      </CardContent>
-    </Card>
+          <div className="flex gap-2">
+            <Textarea
+              placeholder="Write something..."
+              className="flex-1 min-h-24"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              disabled={isSubmitting}
+            />
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Posting...' : 'Post'}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 

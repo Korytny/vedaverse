@@ -1,21 +1,24 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react'; 
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PageTransition from '@/components/PageTransition';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Users, Calendar, BookOpen, Loader2 } from 'lucide-react'; // Removed Edit icon
-import { fetchCommunityDetails, joinCommunity, leaveCommunity, checkUserMembership } from '@/utils/communityUtils'; 
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, Users, Calendar, BookOpen, Loader2, Crown, User } from 'lucide-react';
+import { fetchCommunityDetails, joinCommunity, leaveCommunity, checkUserMembership } from '@/utils/communityUtils';
 import { fetchCommunityPosts } from '@/utils/postUtils';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import PostItem from '@/components/PostItem';
 import CreatePostForm from '@/components/CreatePostForm';
+import { TasksList } from '@/components/tasks/TasksList';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { getTranslatedField } from '@/utils/getTranslatedField';
 import AvatarStack from '@/components/ui/AvatarStack';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 // Update type for member data to match RPC result
 interface CommunityMemberWithAvatar {
@@ -29,13 +32,18 @@ interface ProjectData {
   short_description: string | object;
   members_count: number;
   image_url: string | null;
-  topics: any[] | null; 
-  createdAt?: string; 
-  created_at?: string; 
-  rules?: string | object; 
-  owners_id?: string[] | null; 
-  members: CommunityMemberWithAvatar[]; 
-  posts?: any[]; 
+  topics: any[] | null;
+  createdAt?: string;
+  created_at?: string;
+  rules?: string | object;
+  owners_id?: string[] | null;
+  created_by?: string | null;
+  members: CommunityMemberWithAvatar[];
+  posts?: any[];
+  creator?: {
+    full_name: string | null;
+    avatar_url: string | null;
+  } | null;
 }
 
 const ProjectDetails = () => {
@@ -46,20 +54,21 @@ const ProjectDetails = () => {
   const [postsLoading, setPostsLoading] = useState(true);
   const [isMember, setIsMember] = useState<boolean | null>(null);
   const [membershipLoading, setMembershipLoading] = useState(false);
-  const { user } = useAuth();
+  const { user, profileId } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { t, i18n } = useTranslation();
 
   // Determine if the current user is an owner
   const isOwner = useMemo(() => {
-      if (!user || !project?.owners_id) {
+      if (!profileId || !project?.owners_id) {
           return false;
       }
       // Ensure owners_id is treated as an array
       const owners = Array.isArray(project.owners_id) ? project.owners_id : [];
-      return owners.includes(user.id);
-  }, [user, project?.owners_id]);
+      // User is owner only if they are the FIRST in the array
+      return owners.length > 0 && owners[0] === profileId;
+  }, [profileId, project?.owners_id]);
 
   // Remove Ownership Check Log if no longer needed
   // useEffect(() => { ... }, [user, project, isOwner, isMember]);
@@ -216,7 +225,6 @@ const ProjectDetails = () => {
   const projectTitle = getTranslatedField(project?.name as any, t('community.defaultTitle'));
   const projectShortDescription = getTranslatedField(project?.short_description as any, '');
   const projectLongDescription = getTranslatedField(project?.description as any, t('community.noDescription'));
-  const projectRules = getTranslatedField(project?.rules as any, t('community.noRules'));
 
   const memberAvatarsForStack = useMemo(() => (project?.members || [])
       .map(member => ({ avatar_url: member.avatar_url || null })), 
@@ -284,7 +292,15 @@ const ProjectDetails = () => {
                 />
               </div>
               <div className="md:w-2/3 space-y-4">
-                <h1 className="text-3xl md:text-4xl font-display font-bold">{projectTitle}</h1>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-3xl md:text-4xl font-display font-bold">{projectTitle}</h1>
+                  {isOwner && (
+                    <Badge className="bg-yellow-500 text-white">
+                      <Crown className="h-3 w-3 mr-1" />
+                      Owner
+                    </Badge>
+                  )}
+                </div>
                 <p className="text-lg text-muted-foreground">{projectShortDescription}</p>
 
                 <div className="flex flex-wrap items-center gap-4">
@@ -312,45 +328,66 @@ const ProjectDetails = () => {
                 </div>
 
                  <div className="border-t border-border pt-4">
-                  <h3 className="text-sm font-semibold mb-3 uppercase text-muted-foreground">{t('community.stats')}</h3>
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      {loading ? (
-                         <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                      ) : memberAvatarsForStack.length > 0 ? (
-                        <AvatarStack avatars={memberAvatarsForStack} />
-                      ) : (
-                        <Users className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                      )}
-                      <span className="truncate">
-                        {t('community.members', { count: project.members_count || 0 })}
-                      </span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Left: Stats */}
+                    <div>
+                      <h3 className="text-sm font-semibold mb-3 uppercase text-muted-foreground">{t('community.stats')}</h3>
+                      <div className="grid grid-cols-1 gap-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          {loading ? (
+                             <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                          ) : memberAvatarsForStack.length > 0 ? (
+                            <AvatarStack avatars={memberAvatarsForStack} />
+                          ) : (
+                            <Users className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                          )}
+                          <span className="truncate">
+                            {t('community.members', { count: project.members_count || 0 })}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <BookOpen className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                          <span className="truncate">{postsLoading ? t('community.loadingPosts') : t('community.posts', { count: posts.length })}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                          {project.creator ? (
+                            <>
+                              <Avatar className="h-5 w-5">
+                                <AvatarFallback className="text-xs">
+                                  {project.creator.full_name?.charAt(0).toUpperCase() || 'U'}
+                                </AvatarFallback>
+                              </Avatar>
+                              <span className="truncate">Created by {project.creator.full_name || 'Unknown'}</span>
+                            </>
+                          ) : (
+                            <span className="truncate text-muted-foreground">Creator unknown</span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                          <span className="truncate">{t('community.created', { date: createdDateFormatted })}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <BookOpen className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                      <span className="truncate">{postsLoading ? t('community.loadingPosts') : t('community.posts', { count: posts.length })}</span>
-                    </div>
-                    <div className="flex items-center gap-2 col-span-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                      <span className="truncate">{t('community.created', { date: createdDateFormatted })}</span>
-                    </div>
-                  </div>
-                </div>
 
-                <div className="border-t border-border pt-4">
-                  <h3 className="text-sm font-semibold mb-3 uppercase text-muted-foreground">{t('community.topics')}</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {(project.topics || []).map((topic: any, index: number) => {
-                      const translatedTopic = getTranslatedField(topic as any, `topic-${index}`);
-                      return (
-                        <span key={index} className="px-2 py-0.5 bg-secondary text-secondary-foreground rounded text-xs font-medium">
-                          {translatedTopic}
-                        </span>
-                      );
-                    })}
-                    {(!project.topics || project.topics.length === 0) && (
-                      <span className="text-muted-foreground text-sm">{t('community.noTopics')}</span>
-                    )}
+                    {/* Right: Topics */}
+                    <div>
+                      <h3 className="text-sm font-semibold mb-3 uppercase text-muted-foreground">{t('community.topics')}</h3>
+                      <div className="space-y-2">
+                        {(project.topics || []).map((topic: any, index: number) => {
+                          const translatedTopic = getTranslatedField(topic as any, `topic-${index}`);
+                          return (
+                            <span key={index} className="inline-block px-2 py-0.5 bg-secondary text-secondary-foreground rounded text-xs font-medium">
+                              {translatedTopic}
+                            </span>
+                          );
+                        })}
+                        {(!project.topics || project.topics.length === 0) && (
+                          <span className="text-muted-foreground text-sm">{t('community.noTopics')}</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -365,57 +402,34 @@ const ProjectDetails = () => {
                     <div className="prose max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: projectLongDescription || '' }} />
                   </div>
                   <div className="border-t pt-8">
-                    <h2 className="text-2xl font-bold mb-4">{t('community.communityPosts')}</h2>
+                    <h2 className="text-2xl font-bold mb-4">{t('community.discussion')}</h2>
                     {/* Show Create Post Form only to members */}
                     {user && isMember && (
-                      <div className="mb-6 p-4 border rounded-lg bg-card shadow-sm">
+                      <div className="mb-6">
                         <CreatePostForm communityId={id || ''} onPostCreated={loadPosts} />
-                       </div>
+                      </div>
                     )}
                     {postsLoading ? (
                       <div className="text-center py-12">
                         <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
                         <p>{t('community.loadingPosts')}</p>
                       </div>
-                    ) : posts.length > 0 ? (
+                    ) : (
                       <div className="space-y-6">
                         {posts.map((post) => (
-                          <PostItem 
-                              key={post.id} 
-                              post={post} 
-                              // Pass owner status to PostItem
-                              isOwner={isOwner} 
+                          <PostItem
+                              key={post.id}
+                              post={post}
+                              isOwner={isOwner}
                           />
                         ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-12 bg-card border rounded-xl">
-                        <h3 className="text-xl font-medium mb-2">{t('community.noPosts')}</h3>
-                        {/* Adjust message based on ownership */}
-                        {user && isMember ? (
-                            <p className="text-muted-foreground mb-4">{t('community.firstPost', 'Be the first to share something with the community!')}</p>
-                        ) : (
-                            <p className="text-muted-foreground mb-4">{t('community.firstPost')}</p>
-                        )}
-                        {/* Button logic based on membership/login status remains */}
-                        {user ? (
-                          !isMember && !membershipLoading && (
-                            <Button onClick={handleJoin}>{t('buttons.joinToPost')}</Button>
-                          )
-                        ) : (
-                           <Button onClick={() => navigate('/', { state: { from: location } })}>{t('buttons.signInToPost')}</Button>
-                        )}
                       </div>
                     )}
                   </div>
                 </div>
 
-                <div className="md:col-span-1 bg-card border p-6 rounded-xl space-y-6 self-start h-fit shadow-sm">
-                  <h2 className="text-lg font-semibold mb-4">{t('community.rules')}</h2>
-                  <div 
-                    className="prose prose-sm max-w-none dark:prose-invert text-muted-foreground"
-                    dangerouslySetInnerHTML={{ __html: projectRules || '' }}
-                  />
+                <div className="md:col-span-1 space-y-6 self-start h-fit">
+                  <TasksList communityId={id || ''} filter="open" />
                 </div>
               </div>
             </div>
