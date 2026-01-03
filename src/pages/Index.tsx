@@ -3,10 +3,6 @@ import Hero from '@/components/Hero';
 import Navbar from '@/components/Navbar';
 import MainGallery from '@/components/MainGallery';
 import Footer from '@/components/Footer';
-import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react'; 
-import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
 import Mission from "@/components/Mission";
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -116,37 +112,8 @@ const Index = () => {
         {/* Pass missionData and loading state to Mission component */} 
         <Mission missionData={missionData} isLoading={loadingMission} /> 
 
-        {/* --- Other Sections --- */} 
+        {/* --- Other Sections --- */}
         <MainGallery />
-        
-        {/* --- Call to Action Section --- */}
-        <section className="py-20">
-          <div className="container px-4 mx-auto">
-            <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-3xl p-12 md:p-16 text-center max-w-5xl mx-auto shadow-lg">
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-                  {t('index.ctaTitle', 'Ready to Explore Veda Universe?')}
-                </h2>
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-                  {t('index.ctaSubtitle', 'Join communities, access knowledge, and start your journey today.')}
-                </p>
-                <Button size="lg" className="rounded-full px-8 text-base h-12 shadow hover:shadow-md transition-shadow" asChild>
-                  <Link to="/dashboard">
-                    <span className="flex items-center justify-center">
-                      {t('index.ctaButton', 'Get Started')} 
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </span>
-                  </Link>
-                </Button>
-              </motion.div>
-            </div>
-          </div>
-        </section>
       </main>
       
       <Footer />
