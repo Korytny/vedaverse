@@ -37,7 +37,7 @@ export function MyCommunities() {
       if (error) throw error;
 
       // Filter communities where user is an owner
-      // User is owner only if they are the FIRST in the array
+      // User is owner if their profileId is anywhere in the owners array
       const ownedCommunities = (data || []).filter((community: Community) => {
         let owners: string[] = [];
 
@@ -51,7 +51,7 @@ export function MyCommunities() {
           }
         }
 
-        return owners.length > 0 && owners[0] === profileId;
+        return owners.includes(profileId);
       });
 
       setCommunities(ownedCommunities);

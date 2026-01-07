@@ -24,6 +24,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profileId, setProfileId] = useState<string | null>(null);
   const [profileAvatarUrl, setProfileAvatarUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const navigate = useNavigate();
 
   // Function to fetch profile ID and avatar from public.profiles table using user_id
@@ -83,7 +84,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
              setProfileAvatarUrl(null);
          }
       } finally {
-         if (isMounted) setIsLoading(false);
+         if (isMounted) {
+           setIsLoading(false);
+           setHasLoadedOnce(true);
+         }
       }
     };
 
@@ -97,7 +101,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
        setUser(newUser);
        // Fetch profile data when auth state changes
        fetchProfileData(newUser?.id);
-       setIsLoading(false);
+       // Don't reset isLoading if already loaded once (prevents reload on tab switch)
+       if (!hasLoadedOnce) {
+         setIsLoading(false);
+         setHasLoadedOnce(true);
+       }
     });
 
     return () => {

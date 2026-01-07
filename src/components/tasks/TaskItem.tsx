@@ -67,9 +67,10 @@ interface TaskItemProps {
   onTaskUpdate?: () => void;
   expandedTaskId: string | null;
   onTaskExpand: (taskId: string) => void;
+  readOnly?: boolean; // If true, show simplified view (no controls, steps, comments)
 }
 
-export function TaskItem({ task, currentUserId, authUserId, isOwner, onTaskUpdate, expandedTaskId, onTaskExpand }: TaskItemProps) {
+export function TaskItem({ task, currentUserId, authUserId, isOwner, onTaskUpdate, expandedTaskId, onTaskExpand, readOnly = false }: TaskItemProps) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [steps, setSteps] = useState<TaskStep[]>([]);
@@ -79,13 +80,13 @@ export function TaskItem({ task, currentUserId, authUserId, isOwner, onTaskUpdat
   const [isLoadingComments, setIsLoadingComments] = useState(false);
   const isExpanded = expandedTaskId === task.id;
 
-  // Load steps and comments when task is expanded
+  // Load steps and comments when task is expanded (only in full mode)
   useEffect(() => {
-    if (isExpanded) {
+    if (isExpanded && !readOnly) {
       loadSteps();
       loadComments();
     }
-  }, [isExpanded, task.id]);
+  }, [isExpanded, task.id, readOnly]);
 
   const loadSteps = async () => {
     setIsLoadingSteps(true);
@@ -309,7 +310,7 @@ export function TaskItem({ task, currentUserId, authUserId, isOwner, onTaskUpdat
     <Card className="mb-3 border-border/60">
       <CardContent
         className="p-3 cursor-pointer hover:bg-muted/50 transition-colors"
-        onClick={() => onTaskExpand(task.id)}
+        onClick={() => onTaskExpand(isExpanded ? null : task.id)}
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -351,45 +352,48 @@ export function TaskItem({ task, currentUserId, authUserId, isOwner, onTaskUpdat
 
       {isExpanded && (
         <CardContent className="px-3 pb-3 border-t border-border/60 pt-3">
-          {/* Info Panel */}
-          <div className="flex items-center gap-2 mb-4 p-2 bg-muted/30 rounded-lg">
-            <Button
-              size="sm"
-              variant="outline"
-              className="text-xs flex items-center gap-1"
-              onClick={() => handleUpdateStatus(task.status === 'blocked' ? 'in_progress' : 'blocked')}
-              disabled={isUpdating}
-            >
-              <Pause className="h-3 w-3" />
-              {task.status === 'blocked' ? 'Снять с паузы' : 'Пауза'}
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="text-xs flex items-center gap-1 text-green-600"
-              onClick={() => handleUpdateStatus('completed')}
-              disabled={isUpdating}
-            >
-              <CheckCircle className="h-3 w-3" />
-              Выполнено
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="text-xs flex items-center gap-1"
-              onClick={() => {/* TODO: request help */}}
-            >
-              <HelpCircle className="h-3 w-3" />
-              Помощь
-            </Button>
-          </div>
+          {/* Info Panel - only in full mode */}
+          {!readOnly && (
+            <div className="flex items-center gap-2 mb-4 p-2 bg-muted/30 rounded-lg">
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-xs flex items-center gap-1"
+                onClick={() => handleUpdateStatus(task.status === 'blocked' ? 'in_progress' : 'blocked')}
+                disabled={isUpdating}
+              >
+                <Pause className="h-3 w-3" />
+                {task.status === 'blocked' ? 'Снять с паузы' : 'Пауза'}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-xs flex items-center gap-1 text-green-600"
+                onClick={() => handleUpdateStatus('completed')}
+                disabled={isUpdating}
+              >
+                <CheckCircle className="h-3 w-3" />
+                Выполнено
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-xs flex items-center gap-1"
+                onClick={() => {/* TODO: request help */}}
+              >
+                <HelpCircle className="h-3 w-3" />
+                Помощь
+              </Button>
+            </div>
+          )}
 
           {/* Description */}
           {task.description && (
-            <p className="text-sm text-muted-foreground mb-4">{task.description}</p>
+            <div className="text-sm text-muted-foreground mb-4 whitespace-pre-wrap">{task.description}</div>
           )}
 
-          {/* Steps section */}
+          {/* Steps section - only in full mode */}
+          {!readOnly && (
           <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
               <h5 className="text-xs font-semibold">Этапы выполнения</h5>
@@ -461,8 +465,10 @@ export function TaskItem({ task, currentUserId, authUserId, isOwner, onTaskUpdat
               </div>
             )}
           </div>
+          )}
 
-          {/* Comments section */}
+          {/* Comments section - only in full mode */}
+          {!readOnly && (
           <div className="border-t border-border/60 pt-3">
             <div className="flex items-center gap-2 mb-2">
               <MessageSquare className="h-4 w-4 text-muted-foreground" />
@@ -538,6 +544,7 @@ export function TaskItem({ task, currentUserId, authUserId, isOwner, onTaskUpdat
               </Button>
             </div>
           </div>
+          )}
         </CardContent>
       )}
     </Card>

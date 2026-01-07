@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { TaskItem, TaskWithAssignee } from './TaskItem';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -29,6 +29,7 @@ export function OwnerAdmin() {
   const [selectedCommunityId, setSelectedCommunityId] = useState<string>('');
   const [editingTask, setEditingTask] = useState<TaskWithAssignee | null>(null);
   const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
+  const tasksLoadedRef = useRef(false);
   const authUserId = user?.id;
 
   // Form state for creating/editing tasks
@@ -45,10 +46,12 @@ export function OwnerAdmin() {
   }, [user]);
 
   useEffect(() => {
-    if (communities.length > 0) {
+    if (communities.length > 0 && !tasksLoadedRef.current) {
       loadTasks();
+      tasksLoadedRef.current = true;
     }
-  }, [communities]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [communities.length]);
 
   const loadOwnerCommunities = async () => {
     if (!profileId) return;

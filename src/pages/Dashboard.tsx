@@ -1,5 +1,6 @@
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useState, useMemo } from 'react';
+import { Button } from '@/components/ui/button';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import UserHeader from '@/components/dashboard/UserHeader';
 import UserProjects from '@/components/dashboard/UserProjects';
@@ -10,10 +11,20 @@ import { MyTasks } from '@/components/tasks/MyTasks';
 import { OwnerAdmin } from '@/components/tasks/OwnerAdmin';
 import { MyCommunities } from '@/components/dashboard/MyCommunities';
 import { useDashboardData } from '@/hooks/useDashboardData';
-import { useTranslation } from 'react-i18next'; 
+import { useTranslation } from 'react-i18next';
+
+// Simple styles for tabs
+const tabsContainerStyles: React.CSSProperties = {
+  position: 'relative',
+};
+
+const getTabStyle = (isActive: boolean): React.CSSProperties => ({
+  display: isActive ? 'block' : 'none',
+});
 
 const Dashboard = () => {
-  const { t } = useTranslation(); 
+  const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState('communities');
   const {
     user,
     isLoading,
@@ -24,6 +35,11 @@ const Dashboard = () => {
     activities,
     handleJoinCommunity
   } = useDashboardData();
+
+  // Stabilize props to prevent unnecessary re-renders
+  const stableUserCommunities = useMemo(() => userCommunities || [], [userCommunities]);
+  const stableRecommendedCommunities = useMemo(() => recommendedCommunities || [], [recommendedCommunities]);
+  const stableActivities = useMemo(() => activities || [], [activities]);
 
   if (isLoading || loading) {
     return (
@@ -66,48 +82,86 @@ const Dashboard = () => {
         avatar={userData.avatar}
       />
       
-      <Tabs defaultValue="communities" className="w-full">
-        <TabsList className="mb-6">
-          <TabsTrigger value="communities">{t('dashboard.tabs.myCommunities')}</TabsTrigger>
-          <TabsTrigger value="my-communities">My Communities</TabsTrigger>
-          <TabsTrigger value="my-tasks">My Tasks</TabsTrigger>
-          <TabsTrigger value="owner-admin">Owner Admin</TabsTrigger>
-          <TabsTrigger value="activity">{t('dashboard.tabs.recentActivity')}</TabsTrigger>
-          <TabsTrigger value="settings">{t('dashboard.tabs.account')}</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="communities">
-          <div className="grid grid-cols-1 gap-6">
-            <UserProjects userCommunities={userCommunities || []} />
-            {(recommendedCommunities && recommendedCommunities.length > 0) && (
-              <RecommendedProjects
-                communities={recommendedCommunities}
-                onJoin={handleJoinCommunity}
-              />
-            )}
+      <div className="w-full">
+        <div className="flex flex-wrap gap-2 mb-6">
+          <Button
+            type="button"
+            variant={activeTab === 'communities' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('communities')}
+          >
+            {t('dashboard.tabs.myCommunities')}
+          </Button>
+          <Button
+            type="button"
+            variant={activeTab === 'my-communities' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('my-communities')}
+          >
+            My Communities
+          </Button>
+          <Button
+            type="button"
+            variant={activeTab === 'my-tasks' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('my-tasks')}
+          >
+            My Tasks
+          </Button>
+          <Button
+            type="button"
+            variant={activeTab === 'owner-admin' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('owner-admin')}
+          >
+            Owner Admin
+          </Button>
+          <Button
+            type="button"
+            variant={activeTab === 'activity' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('activity')}
+          >
+            {t('dashboard.tabs.recentActivity')}
+          </Button>
+          <Button
+            type="button"
+            variant={activeTab === 'settings' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('settings')}
+          >
+            {t('dashboard.tabs.account')}
+          </Button>
+        </div>
+
+        <div style={tabsContainerStyles}>
+          <div style={getTabStyle(activeTab === 'communities')}>
+            <div className="grid grid-cols-1 gap-6">
+              <UserProjects userCommunities={stableUserCommunities} />
+              {(stableRecommendedCommunities.length > 0) && (
+                <RecommendedProjects
+                  communities={stableRecommendedCommunities}
+                  onJoin={handleJoinCommunity}
+                />
+              )}
+            </div>
           </div>
-        </TabsContent>
 
-        <TabsContent value="my-communities">
-          <MyCommunities />
-        </TabsContent>
-        
-        <TabsContent value="activity">
-          <UserActivities activities={activities} />
-        </TabsContent>
-        
-        <TabsContent value="settings">
-          <AccountSettings />
-        </TabsContent>
+          <div style={getTabStyle(activeTab === 'my-communities')}>
+            <MyCommunities />
+          </div>
 
-        <TabsContent value="my-tasks">
-          <MyTasks />
-        </TabsContent>
+          <div style={getTabStyle(activeTab === 'activity')}>
+            <UserActivities activities={stableActivities} />
+          </div>
 
-        <TabsContent value="owner-admin">
-          <OwnerAdmin />
-        </TabsContent>
-      </Tabs>
+          <div style={getTabStyle(activeTab === 'settings')}>
+            <AccountSettings />
+          </div>
+
+          <div style={getTabStyle(activeTab === 'my-tasks')}>
+            <MyTasks />
+          </div>
+
+          <div style={getTabStyle(activeTab === 'owner-admin')}>
+            <OwnerAdmin />
+          </div>
+        </div>
+      </div>
     </DashboardLayout>
   );
 };

@@ -143,6 +143,7 @@ export function TasksList({ communityId, filter: propFilter }: TasksListProps) {
             onTaskUpdate={loadTasks}
             expandedTaskId={expandedTaskId}
             onTaskExpand={setExpandedTaskId}
+            readOnly={true}
           />
         ))
       )}

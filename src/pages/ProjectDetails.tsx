@@ -283,11 +283,11 @@ const ProjectDetails = () => {
             </div>
 
              <div className="flex flex-col md:flex-row gap-8 mb-8">
-              <div className="md:w-1/3 relative rounded-xl overflow-hidden self-start">
+              <div className="md:w-1/3 relative rounded-xl overflow-hidden self-start bg-white aspect-[2.025/1] flex items-center justify-center">
                 <img
                   src={project.image_url || './placeholder.svg'}
                   alt={projectTitle}
-                  className="w-full h-auto aspect-video object-cover bg-muted"
+                  className="w-full h-auto object-contain"
                   onError={(e) => (e.currentTarget.src = './placeholder.svg')}
                 />
               </div>

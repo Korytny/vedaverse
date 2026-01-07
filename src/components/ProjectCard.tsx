@@ -24,16 +24,16 @@ type ProjectCardProps = {
 };
 
 const ProjectCard = ({
-    id, 
-    name, 
+    id,
+    name,
     description,
-    short_description, 
-    members_count, 
-    image_url, 
+    short_description,
+    members_count,
+    image_url,
     // price = 0, // Removed price
-    topics = [] 
+    topics = []
 }: ProjectCardProps) => {
-  
+
   const { user } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -88,18 +88,17 @@ const ProjectCard = ({
       transition={{ duration: 0.3 }}
       className="h-full"
     >
-      <Card className="overflow-hidden h-full flex flex-col bg-card hover:border-primary/50 transition-colors duration-300 shadow-sm rounded-lg">
-        <Link to={`/project/${id}`} className="block focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-t-lg" aria-label={title}> 
-          {/* Changed h-40 to aspect-video */}
-          <div className="relative aspect-video w-full bg-muted flex items-center justify-center overflow-hidden rounded-t-lg">
+      <Card className="overflow-hidden h-full flex flex-col bg-white hover:border-primary/50 transition-colors duration-300 shadow-sm rounded-lg">
+        <Link to={`/project/${id}`} className="block focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-t-lg" aria-label={title}>
+          <div className="relative w-full aspect-[2.025/1] bg-white overflow-hidden rounded-t-lg flex items-center justify-center">
             <img
               src={image_url || './placeholder.svg'}
               alt={title}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="w-full h-auto object-contain"
               loading="lazy"
               onError={(e) => { e.currentTarget.src = './placeholder.svg'; e.currentTarget.onerror = null; }}
             />
-            {/* Removed Premium Badge */} 
+            {/* Removed Premium Badge */}
           </div>
         </Link>
 

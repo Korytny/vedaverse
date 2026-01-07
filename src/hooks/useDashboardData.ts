@@ -50,9 +50,10 @@ export const useDashboardData = () => {
         navigate('/');
         return;
       }
-      
-      setLoading(true);
-      
+
+      // Only show loading on first load, not when user changes slightly
+      // setLoading(true);
+
       try {
         // Fetch user data from Supabase auth
         setUserData({
