@@ -39,6 +39,7 @@
     "created": "Created {{date}}",
     "topics": "Topics Covered",
     "noTopics": "No topics specified",
+    "discussion": "Discussion",
     "about": "About this Community",
     "noDescription": "No description provided.",
     "communityPosts": "Community Posts",
@@ -146,5 +147,29 @@
     "deleteConfirmDesc": "This action cannot be undone. This will permanently delete the comment.",
     "deleteCancel": "Cancel",
     "deleteConfirm": "Delete"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "openTasks": "Open Tasks",
+    "all": "All",
+    "open": "Open",
+    "myTasks": "My Tasks",
+    "noTasks": "No tasks in this community yet",
+    "noOpenTasks": "No open tasks available",
+    "noMyTasks": "You haven't taken any tasks yet",
+    "loading": "Loading tasks..."
+  },
+  "gallery": {
+    "title": "Gallery of Inspiration",
+    "description": "Visual glimpses into the Vedic world and spiritual life",
+    "unavailable": "Gallery is currently unavailable"
+  },
+  "footer": {
+    "projects": "Projects",
+    "loading": "Loading...",
+    "noProjects": "No projects yet",
+    "about": "About",
+    "description": "VedaVerse is a platform for collaborative learning and project management. Join communities, share knowledge, and work together on meaningful projects.",
+    "rights": "VedaVerse. All rights reserved."
   }
 }

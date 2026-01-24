@@ -8,6 +8,8 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    // Handle SPA routing - all requests should serve index.html
+    open: true,
   },
   plugins: [
     react(),

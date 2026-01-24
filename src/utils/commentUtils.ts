@@ -102,33 +102,31 @@ export const addComment = async (
     
     newCommentId = newComment.id;
 
-    // 2. Update the post's comments array using RPC for atomicity (if available)
-    //    Or fallback to fetch and update method.
-    //    Using fetch and update for now as RPC function for array append isn't assumed.
-
+    // 2. Update the post's comments array and count
     const { data: postData, error: fetchPostError } = await supabase
       .from('posts')
-      .select('comments') 
+      .select('comments, comments_count')
       .eq('id', postId)
       .single();
 
     if (fetchPostError) {
       console.error("Error fetching post for comment update:", fetchPostError);
-      // Consider the comment created, but the array update failed.
     } else {
-        // 3. Update the post's comments array
+        // 3. Update the post's comments array and count
         const currentCommentIds = (postData?.comments || []) as string[];
-        // Ensure no duplicates if this runs multiple times due to retries (though unlikely here)
         const updatedCommentIds = Array.from(new Set([...currentCommentIds, newComment.id]));
+        const currentCount = postData?.comments_count || 0;
 
         const { error: updatePostError } = await supabase
         .from('posts')
-        .update({ comments: updatedCommentIds })
+        .update({
+          comments: updatedCommentIds,
+          comments_count: currentCount + 1
+        })
         .eq('id', postId);
 
         if (updatePostError) {
-        console.error("Error updating post comments array:", updatePostError);
-        // Log the error, but the comment was created. The array is out of sync.
+        console.error("Error updating post comments:", updatePostError);
         }
     }
     
@@ -174,31 +172,33 @@ export const deleteComment = async (commentId: string, postId: string): Promise<
             throw deleteError;
         }
 
-        // 2. Fetch the current post's comments array
+        // 2. Fetch the current post's comments data
         const { data: postData, error: fetchPostError } = await supabase
             .from('posts')
-            .select('comments')
+            .select('comments, comments_count')
             .eq('id', postId)
             .single();
 
         if (fetchPostError) {
             console.error("Error fetching post for comment deletion update:", fetchPostError);
-            // Comment was deleted, but failed to update post array. Log and return true.
             return true;
         }
 
-        // 3. Update the post's comments array by removing the deleted comment ID
+        // 3. Update the post's comments array and count
         const currentCommentIds = (postData?.comments || []) as string[];
         const updatedCommentIds = currentCommentIds.filter(id => id !== commentId);
+        const currentCount = postData?.comments_count || 0;
 
         const { error: updatePostError } = await supabase
             .from('posts')
-            .update({ comments: updatedCommentIds })
+            .update({
+                comments: updatedCommentIds,
+                comments_count: Math.max(0, currentCount - 1)
+            })
             .eq('id', postId);
 
         if (updatePostError) {
-            console.error("Error updating post comments array after deletion:", updatePostError);
-            // Comment was deleted, but failed to update post array. Log and return true.
+            console.error("Error updating post after deletion:", updatePostError);
         }
 
         return true; // Successfully deleted (even if array update had issues)

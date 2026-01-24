@@ -20,7 +20,3 @@ createRoot(document.getElementById("root")!).render(
     </Suspense>
   </React.StrictMode>
 );
-
-useEffect(() => {
-  Sentry.captureException(new Error("Тестовая ошибка из Vedaverse"));
-}, []);

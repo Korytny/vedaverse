@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { getTranslatedField } from '@/utils/getTranslatedField';
 
@@ -14,6 +15,7 @@ interface Community {
 const Footer = () => {
   const [communities, setCommunities] = useState<Community[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     loadCommunities();
@@ -42,9 +44,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Left: Projects list */}
           <div>
-            <h3 className="text-sm font-semibold mb-4">Projects</h3>
+            <h3 className="text-sm font-semibold mb-4">{t('footer.projects')}</h3>
             {loading ? (
-              <p className="text-sm text-muted-foreground">Loading...</p>
+              <p className="text-sm text-muted-foreground">{t('footer.loading')}</p>
             ) : communities.length > 0 ? (
               <ul className="space-y-3">
                 {communities.map((community) => (
@@ -74,23 +76,22 @@ const Footer = () => {
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-muted-foreground">No projects yet</p>
+              <p className="text-sm text-muted-foreground">{t('footer.noProjects')}</p>
             )}
           </div>
 
           {/* Right: Description */}
           <div>
-            <h3 className="text-sm font-semibold mb-4">About</h3>
+            <h3 className="text-sm font-semibold mb-4">{t('footer.about')}</h3>
             <p className="text-sm text-muted-foreground max-w-md">
-              VedaVerse is a platform for collaborative learning and project management.
-              Join communities, share knowledge, and work together on meaningful projects.
+              {t('footer.description')}
             </p>
           </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-border/40">
           <p className="text-xs text-muted-foreground text-center">
-            © {new Date().getFullYear()} VedaVerse. All rights reserved.
+            © {new Date().getFullYear()} {t('footer.rights')}
           </p>
         </div>
       </div>

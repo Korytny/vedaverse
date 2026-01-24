@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 interface CommunityMemberWithAvatar {
   user_id: string;
   avatar_url: string | null; // RPC function returns text, so string | null
+  full_name: string | null;
 }
 
 export const fetchCommunityDetails = async (communityId: string) => {
@@ -26,23 +27,53 @@ export const fetchCommunityDetails = async (communityId: string) => {
       return null; // Community not found
     }
 
-    // --- Second Query: Call RPC function to get members with avatars ---
+    // --- Second Query: Get members with avatars ---
     let membersWithAvatars: CommunityMemberWithAvatar[] = [];
     try {
-      const { data: memberData, error: rpcError } = await supabase.rpc('get_community_members_with_avatars', {
-        p_community_id: communityId
-      });
+      // First get all user_ids from user_communities
+      const { data: memberData, error: membersError } = await supabase
+        .from('user_communities')
+        .select('user_id')
+        .eq('community_id', communityId);
 
-      // *** ADD CONSOLE LOG HERE ***
-      console.log(`[RPC Result for ${communityId}]:`, memberData);
+      console.log(`[user_communities for ${communityId}]:`, memberData);
 
-      if (rpcError) {
-         console.error("Error calling RPC function get_community_members_with_avatars:", rpcError);
-      } else {
-        membersWithAvatars = (memberData || []) as CommunityMemberWithAvatar[];
+      if (membersError) {
+         console.error("Error fetching members:", membersError);
+      } else if (memberData && memberData.length > 0) {
+        // Get user_ids
+        const userIds = memberData.map((m: any) => m.user_id).filter(Boolean);
+
+        console.log(`[userIds for ${communityId}]:`, userIds);
+
+        // Now fetch profiles for these users
+        if (userIds.length > 0) {
+          const { data: profilesData, error: profilesError } = await supabase
+            .from('profiles')
+            .select('id, avatar_url, full_name')
+            .in('id', userIds);
+
+          if (profilesError) {
+            console.error("Error fetching profiles:", profilesError);
+          } else {
+            console.log(`[Profiles for ${communityId}]:`, profilesData);
+
+            // Create a map for quick lookup
+            const profileMap = new Map((profilesData || []).map((p: any) => [p.id, p]));
+
+            // Combine data
+            membersWithAvatars = userIds.map((userId: string) => ({
+              user_id: userId,
+              avatar_url: profileMap.get(userId)?.avatar_url || null,
+              full_name: profileMap.get(userId)?.full_name || null
+            }));
+
+            console.log(`[Members for ${communityId}]:`, membersWithAvatars);
+          }
+        }
       }
     } catch(err) {
-         console.error("Caught error calling RPC:", err);
+         console.error("Caught error fetching members:", err);
     }
 
     // --- Third Query: Get creator profile ---

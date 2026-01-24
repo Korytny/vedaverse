@@ -8,10 +8,10 @@ import { Textarea } from "@/components/ui/textarea"
 import { ThumbsUp, MessageCircle, Share2, Send, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Post, likePost } from '@/utils/postUtils';
+import { CommentData, addComment, fetchComments } from '@/utils/commentUtils';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from 'react-i18next';
-import { CommentData, addComment } from '@/utils/commentUtils';
 
 interface PostItemProps {
   post: Post;
@@ -22,11 +22,33 @@ interface PostItemProps {
 const PostItem = ({ post, isPinned = false, isOwner }: PostItemProps) => {
   const [likes, setLikes] = useState(post.likes);
   const [commentsCount, setCommentsCount] = useState(post.comments_count);
-  const [isLiking, setIsLiking] = useState(false);
+  const [comments, setComments] = useState<CommentData[]>([]);
+  const [commentsLoading, setCommentsLoading] = useState(true);
+  const [showComments, setShowComments] = useState(true);
   const [newCommentText, setNewCommentText] = useState('');
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [isLiking, setIsLiking] = useState(false);
   const { user } = useAuth();
   const { t } = useTranslation();
+
+  // Load comments
+  useEffect(() => {
+    if (showComments) {
+      loadComments();
+    }
+  }, [showComments, post.id]);
+
+  const loadComments = async () => {
+    setCommentsLoading(true);
+    try {
+      const data = await fetchComments(post.id);
+      setComments(data);
+    } catch (error) {
+      console.error("Error loading comments:", error);
+    } finally {
+      setCommentsLoading(false);
+    }
+  };
 
   const getInitials = (name?: string) => {
     if (!name) return 'U';
@@ -58,6 +80,9 @@ const PostItem = ({ post, isPinned = false, isOwner }: PostItemProps) => {
       if (newCommentData) {
         setNewCommentText('');
         setCommentsCount(prev => prev + 1);
+        // Add new comment to the list
+        setComments(prev => [...prev, newCommentData]);
+        setShowComments(true);
         toast.success(t('comments.addSuccess', 'Comment added'));
       } else {
         toast.error(t('comments.addError', 'Failed to add comment'));
@@ -109,6 +134,37 @@ const PostItem = ({ post, isPinned = false, isOwner }: PostItemProps) => {
           <div className="text-sm text-muted-foreground whitespace-pre-line">{post.content}</div>
       </CardContent>
 
+      {/* Comments Section */}
+      {showComments && (
+        <div className="px-3 pb-3 border-t border-border/60">
+          {commentsLoading ? (
+            <div className="py-4 flex justify-center">
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            </div>
+          ) : comments.length > 0 ? (
+            <div className="space-y-3 pt-2">
+              {comments.map((comment) => (
+                <div key={comment.id} className="flex gap-2">
+                  <Avatar className="h-6 w-6 flex-shrink-0">
+                    <AvatarImage src={comment.user?.avatar_url || undefined} alt={comment.user?.full_name || 'User'} />
+                    <AvatarFallback className="text-xs">{getInitials(comment.user?.full_name)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-xs font-semibold">{comment.user?.full_name || 'User'}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+                      </span>
+                    </div>
+                    <div className="text-sm text-foreground mt-0.5">{comment.text}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      )}
+
       {/* Footer: Actions + Comment Input in one line */}
       <CardFooter className="border-t p-2 flex items-center gap-2 bg-muted/30 flex-wrap">
           <Button
@@ -125,6 +181,7 @@ const PostItem = ({ post, isPinned = false, isOwner }: PostItemProps) => {
             variant="ghost"
             size="sm"
             className="flex items-center gap-1 text-muted-foreground px-2"
+            onClick={() => setShowComments(!showComments)}
           >
             <MessageCircle className="h-4 w-4" />
             <span className="text-xs font-medium">{commentsCount}</span>
@@ -136,6 +193,7 @@ const PostItem = ({ post, isPinned = false, isOwner }: PostItemProps) => {
                 placeholder={t('comments.addCommentPlaceholder', 'Add a comment...')}
                 value={newCommentText}
                 onChange={(e) => setNewCommentText(e.target.value)}
+                onFocus={() => setShowComments(true)}
                 className="flex-1 min-h-0 text-sm resize-none max-h-10"
                 rows={1}
               />

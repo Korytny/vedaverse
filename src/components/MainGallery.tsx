@@ -1,4 +1,5 @@
 "use client"
+import { useTranslation } from 'react-i18next';
 import InteractiveBentoGallery from '@/components/ui/gallery'
 
 // Updated mediaItems with new span values for a 3-column layout on md screens
@@ -70,12 +71,13 @@ const mediaItems = [
 ];
 
 const MainGallery = () => {
-  // TODO: Add translation for title and description
+  const { t } = useTranslation();
+
   if (!mediaItems || mediaItems.length === 0) {
     return (
       <section className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4 text-center">
-          <p>Gallery is currently unavailable</p>
+          <p>{t('gallery.unavailable')}</p>
         </div>
       </section>
     )
@@ -86,8 +88,8 @@ const MainGallery = () => {
       <div className="container mx-auto px-4">
         <InteractiveBentoGallery
           mediaItems={mediaItems.filter(item => item?.url)}
-          title="Gallery of Inspiration" 
-          description="Visual glimpses into the Vedic world and spiritual life"
+          title={t('gallery.title')}
+          description={t('gallery.description')}
         />
       </div>
     </section>

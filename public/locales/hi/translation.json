@@ -146,5 +146,29 @@
     "deleteConfirmDesc": "This action cannot be undone. This will permanently delete the comment.",
     "deleteCancel": "Cancel",
     "deleteConfirm": "Delete"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "openTasks": "Open Tasks",
+    "all": "All",
+    "open": "Open",
+    "myTasks": "My Tasks",
+    "noTasks": "No tasks in this community yet",
+    "noOpenTasks": "No open tasks available",
+    "noMyTasks": "You haven't taken any tasks yet",
+    "loading": "Loading tasks..."
+  },
+  "gallery": {
+    "title": "प्रेरणा गैलरी",
+    "description": "वैदिक दुनिया और आध्यात्मिक जीवन की दृश्य झलकियां",
+    "unavailable": "गैलरी वर्तमान में अनुपलब्ध है"
+  },
+  "footer": {
+    "projects": "प्रोजेक्ट्स",
+    "loading": "लोड हो रहा है...",
+    "noProjects": "अभी तक कोई प्रोजेक्ट नहीं",
+    "about": "हमारे बारे में",
+    "description": "VedaVerse सहयोगी सीखने और परियोजना प्रबंधन के लिए एक मंच है। समुदायों में शामिल हों, ज्ञान साझा करें, और सार्थक परियोजनाओं पर साथ काम करें।",
+    "rights": "VedaVerse. सर्वाधिकार सुरक्षित।"
   }
 }

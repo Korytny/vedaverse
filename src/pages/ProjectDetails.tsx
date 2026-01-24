@@ -5,8 +5,8 @@ import Footer from '@/components/Footer';
 import PageTransition from '@/components/PageTransition';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Users, Calendar, BookOpen, Loader2, Crown, User } from 'lucide-react';
-import { fetchCommunityDetails, joinCommunity, leaveCommunity, checkUserMembership } from '@/utils/communityUtils';
+import { ArrowLeft, Users, Loader2, Crown, User } from 'lucide-react';
+import { fetchCommunityDetails, joinCommunity, checkUserMembership } from '@/utils/communityUtils';
 import { fetchCommunityPosts } from '@/utils/postUtils';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
@@ -200,34 +200,15 @@ const ProjectDetails = () => {
     }
   }, [user, project, navigate, location, t, loadPosts, projectNameForToast]);
 
-  const handleLeave = useCallback(async () => {
-    if (!user || !project) return;
-    try {
-      const result = await leaveCommunity(project.id, user.id);
-      if (result) {
-        setIsMember(false);
-        const updatedProjectData = await fetchCommunityDetails(project.id);
-        if (updatedProjectData) setProject(updatedProjectData as ProjectData);
-        toast.success(t('community.leaveSuccess', { name: projectNameForToast }));
-      }
-    } catch (error) {
-      console.error("Error leaving project:", error);
-      toast.error(t('community.leaveError'));
-    }
-  }, [user, project, t, projectNameForToast]);
 
-
-  // --- Derived State --- 
-  const createdDateFormatted = useMemo(() => project?.createdAt || project?.created_at
-    ? new Date(project.createdAt || project.created_at).toLocaleDateString(i18n.language)
-    : 'N/A', [project?.createdAt, project?.created_at, i18n.language]);
+  // --- Derived State ---
     
   const projectTitle = getTranslatedField(project?.name as any, t('community.defaultTitle'));
   const projectShortDescription = getTranslatedField(project?.short_description as any, '');
   const projectLongDescription = getTranslatedField(project?.description as any, t('community.noDescription'));
 
   const memberAvatarsForStack = useMemo(() => (project?.members || [])
-      .map(member => ({ avatar_url: member.avatar_url || null })), 
+      .map(member => ({ avatar_url: member.avatar_url || null, user_id: member.user_id, full_name: member.full_name })),
       [project?.members]);
 
   // --- RENDER LOGIC --- //
@@ -304,9 +285,6 @@ const ProjectDetails = () => {
                 <p className="text-lg text-muted-foreground">{projectShortDescription}</p>
 
                 <div className="flex flex-wrap items-center gap-4">
-                  <span className="inline-block px-3 py-1 bg-green-500/20 text-green-600 rounded-full text-sm font-medium">
-                    {t('community.free')}
-                  </span>
                   <div className="ml-auto flex-shrink-0">
                     {user ? (
                       membershipLoading ? (
@@ -314,13 +292,9 @@ const ProjectDetails = () => {
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                           {t('community.checkingMembership')}
                         </Button>
-                      ) : isMember === true ? (
-                        <Button variant="destructive" onClick={handleLeave} size="sm">
-                          {t('buttons.leaveCommunity')}
-                        </Button>
                       ) : isMember === false ? (
                         <Button onClick={handleJoin} size="sm">{t('buttons.joinCommunity')}</Button>
-                      ) : null 
+                      ) : null
                     ) : (
                       <Button onClick={() => navigate('/', { state: { from: location } })} size="sm">{t('buttons.signInToJoin')}</Button>
                     )}
@@ -329,9 +303,9 @@ const ProjectDetails = () => {
 
                  <div className="border-t border-border pt-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Left: Stats */}
+                    {/* Left: Members */}
                     <div>
-                      <h3 className="text-sm font-semibold mb-3 uppercase text-muted-foreground">{t('community.stats')}</h3>
+                      <h3 className="text-sm font-semibold mb-3 uppercase text-muted-foreground">Участники</h3>
                       <div className="grid grid-cols-1 gap-y-2 text-sm">
                         <div className="flex items-center gap-2">
                           {loading ? (
@@ -341,32 +315,6 @@ const ProjectDetails = () => {
                           ) : (
                             <Users className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                           )}
-                          <span className="truncate">
-                            {t('community.members', { count: project.members_count || 0 })}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <BookOpen className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                          <span className="truncate">{postsLoading ? t('community.loadingPosts') : t('community.posts', { count: posts.length })}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                          {project.creator ? (
-                            <>
-                              <Avatar className="h-5 w-5">
-                                <AvatarFallback className="text-xs">
-                                  {project.creator.full_name?.charAt(0).toUpperCase() || 'U'}
-                                </AvatarFallback>
-                              </Avatar>
-                              <span className="truncate">Created by {project.creator.full_name || 'Unknown'}</span>
-                            </>
-                          ) : (
-                            <span className="truncate text-muted-foreground">Creator unknown</span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                          <span className="truncate">{t('community.created', { date: createdDateFormatted })}</span>
                         </div>
                       </div>
                     </div>
@@ -374,7 +322,7 @@ const ProjectDetails = () => {
                     {/* Right: Topics */}
                     <div>
                       <h3 className="text-sm font-semibold mb-3 uppercase text-muted-foreground">{t('community.topics')}</h3>
-                      <div className="space-y-2">
+                      <div className="flex flex-wrap gap-x-3 gap-y-2">
                         {(project.topics || []).map((topic: any, index: number) => {
                           const translatedTopic = getTranslatedField(topic as any, `topic-${index}`);
                           return (
@@ -385,6 +333,21 @@ const ProjectDetails = () => {
                         })}
                         {(!project.topics || project.topics.length === 0) && (
                           <span className="text-muted-foreground text-sm">{t('community.noTopics')}</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border">
+                        <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                        {project.creator ? (
+                          <>
+                            <Avatar className="h-5 w-5">
+                              <AvatarFallback className="text-xs">
+                                {project.creator.full_name?.charAt(0).toUpperCase() || 'U'}
+                              </AvatarFallback>
+                            </Avatar>
+                            <span className="truncate">Created by {project.creator.full_name || 'Unknown'}</span>
+                          </>
+                        ) : (
+                          <span className="truncate text-muted-foreground">Creator unknown</span>
                         )}
                       </div>
                     </div>

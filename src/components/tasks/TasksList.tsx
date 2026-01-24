@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
+import { useTranslation } from 'react-i18next';
 
 interface TasksListProps {
   communityId: string;
@@ -12,6 +13,7 @@ interface TasksListProps {
 
 export function TasksList({ communityId, filter: propFilter }: TasksListProps) {
   const { user, profileId } = useAuth();
+  const { t } = useTranslation();
   const [tasks, setTasks] = useState<TaskWithAssignee[]>([]);
   const [loading, setLoading] = useState(true);
   const [internalFilter, setInternalFilter] = useState<'all' | 'open' | 'my'>('all');
@@ -88,16 +90,14 @@ export function TasksList({ communityId, filter: propFilter }: TasksListProps) {
   };
 
   if (loading) {
-    return <div className="text-center py-8">Loading tasks...</div>;
+    return <div className="text-center py-8">{t('tasks.loading')}</div>;
   }
-
-  const openTasksCount = tasks.filter(t => t.status === 'open').length;
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-semibold">
-          {showFilterControls ? 'Tasks' : 'Открытые задачи'}
+          {showFilterControls ? t('tasks.title') : t('tasks.openTasks')}
         </h3>
         {showFilterControls && (
           <div className="flex gap-2">
@@ -106,21 +106,21 @@ export function TasksList({ communityId, filter: propFilter }: TasksListProps) {
               className="cursor-pointer"
               onClick={() => setInternalFilter('all')}
             >
-              All ({tasks.length})
+              {t('tasks.all')} ({tasks.length})
             </Badge>
             <Badge
               variant={filter === 'open' ? 'default' : 'outline'}
               className="cursor-pointer"
               onClick={() => setInternalFilter('open')}
             >
-              Open ({tasks.filter(t => t.status === 'open').length})
+              {t('tasks.open')} ({tasks.filter(t => t.status === 'open').length})
             </Badge>
             <Badge
               variant={filter === 'my' ? 'default' : 'outline'}
               className="cursor-pointer"
               onClick={() => setInternalFilter('my')}
             >
-              My Tasks ({tasks.filter(t => t.assigned_to === user?.id).length})
+              {t('tasks.myTasks')} ({tasks.filter(t => t.assigned_to === user?.id).length})
             </Badge>
           </div>
         )}
@@ -128,9 +128,9 @@ export function TasksList({ communityId, filter: propFilter }: TasksListProps) {
 
       {tasks.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
-          {filter === 'open' && 'No open tasks available'}
-          {filter === 'my' && 'You haven\'t taken any tasks yet'}
-          {filter === 'all' && 'No tasks in this community yet'}
+          {filter === 'open' && t('tasks.noOpenTasks')}
+          {filter === 'my' && t('tasks.noMyTasks')}
+          {filter === 'all' && t('tasks.noTasks')}
         </div>
       ) : (
         tasks.map((task) => (
